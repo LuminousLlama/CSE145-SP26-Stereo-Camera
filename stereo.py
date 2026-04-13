@@ -13,9 +13,9 @@ cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
 					 [0.00000,	-1.00000,	0.00000,	1.00000],
 					 [0.00000,	0.00000,	-1.00000,	-10.00000],
 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 1
-cam2_ext = np.array([[0.99718, 0.00000, 0.07502, 0.55073], 
+cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578], 
 					 [0.00000,	-1.00000,	0.00000,	1.00000], 
-					 [0.07502,	0.00000,	-0.99718,	-9.98683], 
+					 [0.10530,	0.00000,	-0.99444,	-9.99706], 
 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 2
 dist_coeffs = None #distortion coefficients
 
@@ -26,10 +26,10 @@ dist_coeffs = None #distortion coefficients
 #0.00000	0.00000	0.00000	1.00000
 
 #ext2
-#0.99718	0.00000	0.07502	0.55073
-#0.00000	-1.00000	0.00000	1.00000
-#0.07502	0.00000	-0.99718	-9.98683
-#0.00000	0.00000	0.00000	1.00000
+# 0.99444	0.00000	0.10530	0.55578
+# 0.00000	-1.00000	0.00000	1.00000
+# 0.10530	0.00000	-0.99444	-9.99706
+# 0.00000	0.00000	0.00000	1.00000
 
 #K
 #623.53830	0.00000	640.00000	0.00000
@@ -103,10 +103,10 @@ def rectify_images(img1, img2, camera_matrix, dist_coeffs, cam1_ext, cam2_ext, s
 
 	#print(rectified1.shape, rectified2.shape)
 
-	# left_out = out_prefix + '_left.png'
-	# right_out = out_prefix + '_right.png'
-	# cv2.imwrite(left_out, rectified1)
-	# cv2.imwrite(right_out, rectified2)
+	left_out = out_prefix + '_left.png'
+	right_out = out_prefix + '_right.png'
+	cv2.imwrite(left_out, rectified1)
+	cv2.imwrite(right_out, rectified2)
 
 	return rectified1, rectified2, P1, P2, Q
 
