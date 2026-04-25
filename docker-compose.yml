@@ -1,0 +1,11 @@
+services: 
+  ros2_app: 
+    image: stereo:test
+    # command: 
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - /opt/HuarayTech:/opt/HuarayTech
+    ipc: host
+    network_mode: host  
