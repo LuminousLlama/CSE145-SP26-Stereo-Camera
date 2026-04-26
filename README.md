@@ -36,3 +36,21 @@ docker run --rm -it \
 
   before running gui app need 
   `xhost +local:docker`
+
+
+## wifi 
+
+sudo nmcli --ask connection up UCSD-PROTECTED
+
+
+## rubik pi setup 
+
+!! before installing huaray tech sdk 
+
+sudo apt update
+sudo apt install linux-headers-$(uname -r)
+sudo apt install build-essential linux-headers-$(uname -r)
+
+https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
+
+rosdep install --from-paths src --ignore-src -r -y
