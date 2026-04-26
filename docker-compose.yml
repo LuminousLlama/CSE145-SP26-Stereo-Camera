@@ -6,6 +6,5 @@ services:
       - 'c 189:* rwm'
     volumes:
       - /dev/bus/usb:/dev/bus/usb
-      - /opt/HuarayTech:/opt/HuarayTech
     ipc: host
     network_mode: host  
