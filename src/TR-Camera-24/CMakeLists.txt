@@ -30,7 +30,6 @@ target_link_libraries(camera_node ${OpenCV_LIBS})
 
 #huaray
 set(HUARAY_LIB_DIR /opt/HuarayTech/MVviewer/lib)
-set(GENICAM_LIB_DIR ${HUARAY_LIB_DIR}/GenICam/bin/Linux64_x64)
 
 find_library(CAMERA_LIB
   NAMES MVSDK
@@ -38,16 +37,6 @@ find_library(CAMERA_LIB
   REQUIRED
 )
 target_link_libraries(camera_node ${CAMERA_LIB})
-
-# Linker needs to know where libMVSDK.so's transitive deps live during build.
-# Runtime resolution is handled by ldconfig (see /etc/ld.so.conf.d/huaray.conf).
-target_link_options(camera_node PRIVATE
-  "-Wl,-rpath-link,${GENICAM_LIB_DIR}"
-)
-
-# old code
-# find_library(CAMERA_LIB NAMES MVSDK HINTS /opt/HuarayTech/MVviewer/lib REQUIRED)
-# target_link_libraries(camera_node ${CAMERA_LIB})
 
 # our stuff
 
