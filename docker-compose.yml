@@ -3,7 +3,7 @@ services:
     image: stereo:test
     # command: 
     device_cgroup_rules:
-      - 'c 189:* rmw'
+      - 'c 189:* rwm'
     volumes:
       - /dev/bus/usb:/dev/bus/usb
       - /opt/HuarayTech:/opt/HuarayTech

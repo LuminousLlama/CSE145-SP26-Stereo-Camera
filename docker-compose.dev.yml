@@ -1,5 +1,6 @@
 services:
   ros2_app:
+    command: sleep infinity 
     build:
       context: .
       target: builder
