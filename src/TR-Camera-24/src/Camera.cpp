@@ -22,7 +22,19 @@ Camera::Camera() {
             return;
         }
         displayDeviceInfo(deviceInfoList);
-        unsigned int cameraIndex = 0;
+
+        unsigned int cameraIndex = deviceInfoList.nDevNum; // sentinel: not found
+        for (unsigned int i = 0; i < deviceInfoList.nDevNum; i++) {
+            if (strstr(deviceInfoList.pDevInfo[i].vendorName, "Huaray") != nullptr) {
+                cameraIndex = i;
+                break;
+            }
+        }
+        if (cameraIndex == deviceInfoList.nDevNum) {
+            printf("No HuaRay camera found in device list\n");
+            return;
+        }
+
         this->status = IMV_CreateHandle(&temp_devHandle, modeByIndex, (void *) &cameraIndex);
         if (IMV_OK != this->status) {
             throw "Create devHandle failed";
