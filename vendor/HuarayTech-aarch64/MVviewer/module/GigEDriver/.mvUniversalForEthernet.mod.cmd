@@ -1,0 +1,1 @@
+savedcmd_/opt/HuarayTech/MVviewer/module/GigEDriver/mvUniversalForEthernet.mod := printf '%s\n'   universalEthernet.o RayDriverApi/RayApi.o RayDriverApi/RayFile.o RayDriverApi/RayNet.o libModule/libuniversalEthernet-core.o | awk '!x[$$0]++ { print("/opt/HuarayTech/MVviewer/module/GigEDriver/"$$0) }' > /opt/HuarayTech/MVviewer/module/GigEDriver/mvUniversalForEthernet.mod
