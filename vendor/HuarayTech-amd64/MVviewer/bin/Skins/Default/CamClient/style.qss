@@ -1,0 +1,3366 @@
+*{
+	color:#9d9d9d;
+	font-size: 12px;
+}
+
+/* MainWindow边框默认边框为1 */
+QFrame#MainWindow
+{
+    border:1px solid #171717;
+}
+
+/* QFrame默认边框为0，规避不同操作系统显示不一致问题 */
+QFrame
+{
+    border:0px solid #000000;
+}
+
+/* 通用控件--QMenu */
+QMenu{
+    background-color: #2D2E30;
+    margin: 0px;
+	border: 1px solid #171717;
+	border-radius: 2px;
+}
+QMenu::item {
+	background-color: #2D2E30;
+	color: #9D9D9D;
+	min-height: 32px;
+    padding: 2px 30px 2px 25px;
+    border: 0px solid transparent; /* reserve space for selection border */
+}
+QMenu::item:selected {
+    background: #373839;
+	color: #FFFFFF;
+}
+QMenu::item:hover {
+    background: #373839;
+	color: #FFFFFF;
+}
+QMenu::item:disabled {
+	color: #737373;
+}
+QMenu::separator {
+    height: 1px;
+    background: #1C1C1C;
+}
+QMenu::indicator {
+	left: 5px;
+} 
+QMenu::right-arrow {
+	image: url(Skins/Default/CamClient/Icon_MenuItem_ArrowRight_Normal.png);
+	margin-right: 9px;
+}
+
+/* 通用控件--QSlider */
+QSlider::groove:horizontal
+{
+	border: 0px solid #4A708B;
+	background: rgb(40, 41, 43);
+	height: 6px;
+	border-radius: 3px;
+	padding-left:0px;
+	padding-right:0px;
+}
+QSlider::sub-page:horizontal
+{
+	background: rgb(104, 104, 106);
+	border: 0px solid #4A708B;
+	height: 6px;
+	border-radius: 3px;
+}
+QSlider::add-page:horizontal
+{
+	background: rgb(60, 61, 62);
+	border: 0px solid  rgb(226, 226, 226);
+	height: 6px;
+	border-radius: 3px;
+}
+QSlider::handle:horizontal 
+{
+	background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, 
+	stop:0.0 rgba(135, 135, 135, 255), stop:0.7 rgba(135, 135, 135, 255), stop:0.9 rgba(34, 35, 36, 40));
+	width: 16px;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	border-radius: 8px;
+}
+QSlider::handle:horizontal:hover
+{
+	background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, 
+	stop:0.0 rgba(255, 45, 45, 255), stop:0.7 rgba(255, 45, 45, 255), stop:0.9 rgba(34, 35, 36, 40));
+	width: 16px;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	border-radius: 8px;
+}
+QSlider::handle:horizontal:pressed
+{
+	background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, 
+	stop:0.0 rgba(255, 45, 45, 255), stop:0.7 rgba(255, 45, 45, 255), stop:0.9 rgba(34, 35, 36, 40));
+	width: 16px;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	border-radius: 8px;
+}
+QSlider::sub-page:horizontal:disabled
+{
+	background: rgb(60,61,62);
+	border-color: rgb(60,61,62);
+	border: 0px solid  rgb(226, 226, 226);
+	border-radius: 3px;
+}
+QSlider::add-page:horizontal:disabled 
+{
+	background: rgb(60,61,62);
+	border-color: rgb(60,61,62);
+	border: 0px solid  rgb(60,61,62);
+	border-radius: 3px;
+}
+QSlider::handle:horizontal:disabled
+{
+	background: rgb(82, 82, 83);
+	width: 12px;
+	margin-top: -3px;
+	margin-bottom: -3px;
+	border-radius: 6px;
+}
+
+/* 按钮 */
+QPushButton, QToolButton {
+	border:0px solid #808080;
+	background: #4c4d4e;
+	border-radius: 1px;
+	min-width: 50px;
+	min-height: 25px;
+	color: #e2e2e2;
+}
+QPushButton:hover, QToolButton:hover {
+	background: #545557;
+	color: #ffffff;
+}
+QPushButton:pressed,  QToolButton:pressed {
+	background: #48494a;
+	color: #ffffff;
+}
+QPushButton:checked,  QToolButton:checked {
+	background: #354040;
+	color: #e2e2e2;
+}
+QPushButton:disabled, QToolButton:disabled {
+	background: #48494a;
+	color: #7a7d7f;
+}
+QPushButton:default, QToolButton:default, QPushButton[highlight="1"] {
+	background: #4c4d4e;
+	color: #e2e2e2;
+}
+QPushButton:default:hover, QToolButton:default:hover, QPushButton[highlight="1"]:hover {
+	background: #545557;
+	color: #ffffff;
+}
+QPushButton:default:pressed, QToolButton:default:pressed, QPushButton[highlight="1"]:pressed {
+	background: #48494a;
+	color: #ffffff;
+}
+QPushButton:default:disabled, QToolButton:default:disabled, QPushButton[highlight="1"]:disabled {
+	background: #48494a;
+	color: #7a7d7f;
+}
+
+/* 通用控件--ComboBox */
+QComboBox {
+	border: 1 solid #373839;
+	selection-background-color: #797c81;
+	selection-color: black;
+	max-height: 20px;
+	min-height: 24px;
+	background: #373839;
+    padding: 0px 5px 0px 5px; 
+	border-radius: 1px;
+	color: #e5e5e5;
+	padding-left: 11px;
+	combobox-popup: 1;
+}
+QComboBox:focus {
+	border: 1 solid #ff2d2d;
+	color: #e5e5e5;
+}
+QComboBox:disabled {
+	background: #373839;
+	color: #9d9d9d;
+}
+QComboBox QAbstractItemView::item {
+	height:38;
+}
+QComboBox:on, QComboBox:hover,  
+QComboBox QAbstractItemView::item:selected {
+	color: #e5e5e5;
+	background-color: #373839;
+}
+QComboBox QAbstractItemView::item:hover{ 
+	/* color: #e5e5e5; */
+	background-color: #373839;
+	color: #ffffff;
+}
+QComboBox QAbstractItemView {
+	outline: 0px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+    selection-background-color: #797c81;
+	selection-color: #ffffff;
+	background-color: #2a2b2c;
+}
+
+QComboBox::drop-down {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	margin-top: 5px;
+	margin-right: 5px;
+	border: 0;
+}
+QComboBox::down-arrow {
+    image: url(Skins/Default/CamClient/Icon_ComboBox_ArrowDown_Normal.png)
+}
+QComboBox::down-arrow:hover {
+        image: url(Skins/Default/CamClient/Icon_ComboBox_ArrowDown_Hover.png)
+}
+QComboBox::down-arrow:pressed {
+        image: url(Skins/Default/CamClient/Icon_ComboBox_ArrowDown_Pressed.png)
+}
+QComboBox::down-arrow:disabled {
+        image: url(Skins/Default/CamClient/Icon_ComboBox_ArrowDown_Disable.png)
+}
+
+/* QCheckBox */
+QCheckBox{
+	spacing: 8px;
+	color: #e2e2e2;
+}
+QCheckBox:hover,CommonDialog QCheckBox:hover {
+	color: rgb(255,255,255);
+}
+
+CommonDialog QCheckBox::indicator {
+	height: 14px;
+	width: 14px;
+}
+QCheckBox::indicator:unchecked {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Unchecked_Normal.png);
+}
+QCheckBox::indicator:unchecked:hover {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Unchecked_Hover.png);
+}
+QCheckBox::indicator:unchecked:disabled{
+    image: url(Skins/Default/CamClient/CheckBox_Common_Unchecked_Disable.png);
+}
+QCheckBox::indicator:unchecked:pressed {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Unchecked_Hover.png);
+}
+QCheckBox::indicator:checked{
+    image: url(Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png);
+}
+QCheckBox::indicator:checked:hover {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png);
+}
+QCheckBox::indicator:checked:disabled {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png);
+}
+QCheckBox::indicator:checked:pressed {
+    image: url(Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png);
+}
+
+/* QRadioButton */
+QRadioButton::indicator::unchecked {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Unchecked_Normal.png);
+}
+QRadioButton::indicator::unchecked:hover {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Unchecked_Hover.png);
+}
+QRadioButton::indicator::unchecked:pressed {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Unchecked_Hover.png);
+}
+QRadioButton::indicator::unchecked:disabled {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Unchecked_Disable.png);
+}
+QRadioButton::indicator::checked {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Checked_Normal.png);
+}
+QRadioButton::indicator::checked:hover {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Checked_Hover.png);
+}
+QRadioButton::indicator::checked:pressed {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Checked_Pressed.png);
+}
+QRadioButton::indicator::checked:disabled {
+    image: url(Skins/Default/CamClient/RadioBtn_Common_Checked_Disable.png);
+}
+QRadioButton {
+	color:#9d9d9d;
+}
+QRadioButton:hover {
+	color:#ffffff;
+}
+QRadioButton:disabled {
+	color:#7a7d7f;
+}
+
+/* 通用控件--编辑框 */
+QLineEdit {
+    min-height: 26px;
+	background-color: #373839;
+	selection-background-color: #797c81;
+    selection-color: #FFFFFF;
+	border-radius: 1px;
+	color: #e5e5e5;
+	padding-left: 11px;
+}
+QLineEdit:focus {
+	background-color: #373839;
+	border-radius: 1px;
+	border: 1px solid #ff2d2d;
+	color: #e5e5e5;
+}
+QLineEdit:disabled {
+	background-color: #373839;
+	border-radius: 1px;
+	border: 1px solid #242424;
+	color: #9d9d9d;
+}
+
+/* SpinBox */
+QDoubleSpinBox, QSpinBox {
+    min-height: 24px;
+	padding-right: 0px;
+	border: 1 solid #242424;
+	background: #373839;
+	color: #e5e5e5;
+}
+QDoubleSpinBox:focus, QSpinBox:focus{
+	border: 1 solid #ff2d2d;
+}
+QDoubleSpinBox:disabled, QSpinBox:disabled{
+	background: #373839;
+	color: #9d9d9d;
+}
+QDoubleSpinBox::up-button, QSpinBox::up-button {	
+	subcontrol-origin: border;
+    subcontrol-position: top right; 
+    width: 18px; 
+    border-image: url(Skins/Default/CamClient/SpinBox_Common_Up_Normal.png);
+    margin: 1;
+	margin-bottom: 2px;
+}
+QDoubleSpinBox::up-button:hover, QSpinBox::up-button:hover {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Up_Hover.png);
+}
+QDoubleSpinBox::up-button:pressed, QSpinBox::up-button:pressed {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Up_Pressed.png);
+}
+QDoubleSpinBox::up-button:disabled, QSpinBox::up-button:disabled {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Up_Disable.png);
+}
+
+QDoubleSpinBox::down-button, QSpinBox::down-button {
+	subcontrol-origin: border;
+    subcontrol-position: bottom right; 
+    width: 18px;
+    border-image: url(Skins/Default/CamClient/SpinBox_Common_Down_Normal.png);
+    margin: 1;
+	margin-top: 2px;
+}
+QDoubleSpinBox::down-button:hover, QSpinBox::down-button:hover {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Down_Hover.png);
+}
+QDoubleSpinBox::down-button:pressed, QSpinBox::down-button:pressed {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Down_Pressed.png);
+}
+QDoubleSpinBox::down-button:disabled, QSpinBox::down-button:disabled {
+	border-image: url(Skins/Default/CamClient/SpinBox_Common_Down_Disable.png);
+}
+
+/* 水平滚动条 */
+QScrollBar:horizontal {
+    border: 0px solid white;
+    background: transparent;
+    height: 6px;
+    margin: 0 0 0 0;
+}
+QScrollBar::handle:horizontal {
+    background: #555555;
+    min-width: 6px;
+	border-radius: 3px;
+}
+QScrollBar::add-line:horizontal {
+    border: 0px solid white;
+    background: transparent;
+    width: 0px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+QScrollBar::sub-line:horizontal {
+    border: 0px solid white;
+    background: transparent;
+    width: 0px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+QScrollBar::sub-page:horizontal {
+    background: transparent;
+}
+QScrollBar::add-page:horizontal {
+    background: transparent;
+}
+
+/* 垂直滚动条 */
+QScrollBar:vertical {
+    border: 0px solid white;
+    background: transparent;
+    width: 6px;
+    margin: 0 0 0 0;
+}
+QScrollBar::handle:vertical {
+    background: #555555;
+    min-height: 6px;
+	border-radius: 3px;
+}
+QScrollBar::add-line:vertical {
+    border: 0px solid white;
+    background: transparent;
+    height: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+QScrollBar::sub-line:vertical {
+    border: 0px solid white;
+    background: transparent;
+    height: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+QScrollBar::add-page:vertical {
+    background: transparent;
+}
+
+/* ToolTip */
+QToolTip {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 1px;
+    opacity: 255;
+    background: #646668;
+    color: #ffffff;
+}
+
+/* CMVSpinLabel */
+CMVSpinLabel {	
+    background-color: #292a2b;
+    color: #e5e5e5;
+	
+}
+CMVSpinLabel:disabled {	
+    color: #9d9d9d;
+}
+
+/* 主框架 */
+MainWindow {
+    background: #1F2021;
+}
+
+MainWindow QSplitter:handle:vertical {
+	background:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(69, 70, 70, 255), stop:1 rgba(0, 0, 0, 255));
+}
+
+MainWindow QSplitter:handle:horizontal {
+	background:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(69, 70, 70, 255), stop:1 rgba(0, 0, 0, 255));
+}
+
+CCommonDlg CCommonTitleBar QWidget{
+	background: #2f2f30;
+}
+CCommonDlg CCommonTitleBar QLabel{
+	background: #2f2f30;
+}
+
+CCommonDlg CCommonTitleBar QWidget:!active{
+	background: #2c2d2e;
+}
+CCommonDlg CCommonTitleBar QLabel:!active{
+	background: #2c2d2e;
+}
+QToolBar#mainwindowToolBar {
+	min-height:50px;
+	max-height:50px;
+	background:#BABABA;
+}
+
+CMainWindowTitleForm {
+	min-height: 60px;	
+	max-height: 60px;	
+	background: #1F2021;
+	font-size: 18px;
+}
+CMainWindowTitleForm QFrame#frame{	
+	background: #1F2021;
+}
+
+CMainWindowTitleForm QToolButton::menu-indicator{
+	image: None;
+}
+CMainWindowTitleForm QLabel#MainWindowTitle_Log {
+	padding: 0 6;
+	min-width: 80px;
+	min-height: 52px;
+	image: url("Skins/Default/CamClient/Icon_Navi_Logo_App.png");
+}
+
+CMainWindowTitleForm QToolButton{
+    min-width: 90;
+    margin: 0 0 0 0;
+    min-height: 0;
+    border-radius: 0;
+    background: none;
+    color: #9D9D9D;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+CMainWindowTitleForm QToolButton:hover, CMainWindowTitleForm QToolButton:pressed
+{
+	background: none;
+	color:#FFFFFF;
+}
+
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_File
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_EventMoniter
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Static
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Settings
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Tools
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Help
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Language
+{
+	max-height: 26;
+    font-size: 14px;
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Account
+{
+	max-height: 26;
+    font-size: 14px;
+}
+
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Min {
+	max-height: 24;
+	max-width: 24;
+	min-height: 24;
+	min-width: 24;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMinimize_Normal.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Min:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMinimize_Hover.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Min:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMinimize_Pressed.png");
+}
+
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max {
+	max-height: 24;
+	max-width: 24;
+	min-height: 24;
+	min-width: 24;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMaximize_Normal.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMaximize_Hover.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinMaximize_Pressed.png");
+}
+
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max:checked{
+	max-height: 24;
+	max-width: 24;
+	min-height: 24;
+	min-width: 24;
+	background: transparent;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinRestore_Normal.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max:checked:hover {
+	background: transparent;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinRestore_Hover.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Max:checked:pressed {
+	background: transparent;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinRestore_Pressed.png");
+}
+
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Close {
+	max-height: 24;
+	max-width: 24;
+	min-height: 24;
+	min-width: 24;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Normal.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Close:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Hover.png");
+}
+CMainWindowTitleForm QToolButton#MainWindowTitle_Btn_Close:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Pressed.png");
+}
+
+/* 设备发现界面 */
+CDiscoveryDevicesForm QFrame#frame{
+	border-top: 1px solid #070707;
+}
+
+CDiscoveryDevicesForm  QFrame#frame_DevInfo{
+	background: #28292B;
+	min-height: 30px;
+	max-height: 30px;
+}
+
+CDiscoveryDevicesForm  QFrame#frame_DevList{
+	background: #28292B;
+	min-height: 30px;
+	max-height: 30px;
+}
+
+CDiscoveryDevicesForm QLabel {
+	color: #B3B3B3;
+}
+
+CDiscoveryDevicesForm > QPushButton {	
+	border: 0;
+	border-radius: 0;
+	padding: 0;	
+	min-width: 0px;
+	min-height: 0px;
+}
+CDiscoveryDevicesForm QPushButton#reflesh {	
+	min-width: 26;
+	min-height: 26;
+	max-width: 26;
+	max-height: 26;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Refresh_Normal.png); 
+}
+CDiscoveryDevicesForm QPushButton#reflesh:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Refresh_Hover.png);
+}
+CDiscoveryDevicesForm QPushButton#reflesh:pressed {	
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Refresh_Pressed.png);
+}
+CDiscoveryDevicesForm QPushButton#reflesh:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Refresh_Disable.png);
+}
+
+CDiscoveryDevicesForm QTreeWidget {	
+	border-top: 0px solid #808080;
+	padding-top: 5px;
+	background: transparent;
+}
+CDiscoveryDevicesForm QTreeView::item {
+	height: 24px;
+	color: #9d9d9d;
+}
+
+CDiscoveryDevicesForm QTreeView::item:has-children {
+	height: 24px;
+	color: #e5e5e5;
+}
+
+CDiscoveryDevicesForm QPushButton#btnExpandDevice{
+    background:#28292b;
+	min-width: 18px;
+	max-width: 18px;
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Normal.png);
+	background-repeat: repeat-x;
+	background-position: left;
+	border-top: 1px solid #000000;
+}
+CDiscoveryDevicesForm QPushButton#btnExpandDevice:hover {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Hover.png);
+}
+CDiscoveryDevicesForm QPushButton#btnExpandDevice:pressed {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Pressed.png);
+}
+CDiscoveryDevicesForm QPushButton#btnCollpaseDevice{
+    background: rgba(0, 0, 0, 180);
+	min-width: 14px;
+	min-height: 32px;
+	max-width: 14px;
+	max-height:32px;
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Normal.png);
+	background-repeat: repeat-x;
+	background-position: left;
+}
+CDiscoveryDevicesForm QPushButton#btnCollpaseDevice:hover {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Hover.png);
+}
+CDiscoveryDevicesForm QPushButton#btnCollpaseDevice:pressed {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Pressed.png);
+}
+
+
+QFrame#CDiscoveryRootForm{
+	padding-left: 6px;
+}
+
+QLabel#label_RootItem[hover="0"] {
+	color: #E5E5E5;
+	font-size: 14px;
+}
+QLabel#label_RootItem[hover="1"] {
+	color: #FFFFFF;
+	font-size: 14px;
+}
+
+QWidget#widget_RootCheckBox {
+	min-width: 22px;
+	max-width: 22px;
+	min-height: 22px;
+	max-height: 22px;
+	background: transparent;
+}
+QCheckBox#checkBox_RootItem  {
+	min-width: 22px;
+	max-width: 22px;
+	min-height: 22px;
+	max-height: 22px;
+	background: transparent;
+}
+
+
+QCheckBox#checkBox_RootItem::indicator {
+	min-width: 22px;
+	max-width: 22px;
+	min-height: 22px;
+	max-height: 22px;
+	spacing: 0px;
+}
+
+QCheckBox#checkBox_RootItem::indicator:unchecked {
+	image: url(Skins/Default/CamClient/Btn_Common_TreeUnfold_Normal.png);
+}
+QCheckBox#checkBox_RootItem::indicator:unchecked:hover {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeUnfold_Hover.png");
+}
+QCheckBox#checkBox_RootItem::indicator:unchecked:pressed {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeUnfold_Hover.png");
+}
+QCheckBox#checkBox_RootItem::indicator:unchecked:disabled {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeUnfold_Normal.png");
+}
+
+QCheckBox#checkBox_RootItem::indicator:checked {
+	image: url(Skins/Default/CamClient/Btn_Common_TreeFold_Normal.png);
+}
+QCheckBox#checkBox_RootItem::indicator:checked:hover {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeFold_Hover.png");
+}
+QCheckBox#checkBox_RootItem::indicator:checked:pressed {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeFold_Hover.png");
+}
+QCheckBox#checkBox_RootItem::indicator:checked:disabled {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeFold_Normal.png");
+}
+
+QCheckBox#checkBox_RootItem[hover="1"]::indicator:unchecked {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeUnfold_Hover.png");
+}
+
+QCheckBox#checkBox_RootItem[hover="1"]::indicator:checked {
+	image: url("Skins/Default/CamClient/Btn_Common_TreeFold_Hover.png");
+}
+
+
+CDiscoveryButtonsForm QFrame#frame {
+	background: #4f5051;
+	border: 0;
+	border-left: 1px solid #1f2021; 
+	padding-left : 4px;
+	padding-right: 4px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+CDiscoveryButtonsForm QPushButton {
+    min-width: 22px;
+	min-height: 22px;
+	max-width: 22px;
+	max-height: 22px;
+	background: none;
+	border-radius: 0;
+    
+	qproperty-text: "";
+	margin: 0;
+	padding: 0;
+}
+
+CDiscoveryButtonsForm QPushButton#btnConnect {
+	background: none;
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Connect_Normal.png);
+} 
+CDiscoveryButtonsForm QPushButton#btnConnect:hover {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Connect_Hover.png);
+}
+CDiscoveryButtonsForm QPushButton#btnConnect:pressed {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Connect_Pressed.png);
+}
+CDiscoveryButtonsForm QPushButton#btnConnect:disabled {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Connect_Disable.png);
+}
+
+
+CDiscoveryButtonsForm QPushButton#btnDisconnect {
+    background: none;
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Disconnect_Normal.png);
+} 
+CDiscoveryButtonsForm QPushButton#btnDisconnect:hover {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Disconnect_Hover.png);
+}
+CDiscoveryButtonsForm QPushButton#btnDisconnect:pressed {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Disconnect_Pressed.png);
+}
+CDiscoveryButtonsForm QPushButton#btnDisconnect:disabled {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_Disconnect_Disable.png);
+}
+
+CDiscoveryButtonsForm QPushButton#btnForceIP {
+    background: none;
+	border-image: url(Skins/Default/CamClient/Btn_DevList_ModifyIP_Normal.png);
+} 
+CDiscoveryButtonsForm QPushButton#btnForceIP:hover {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_ModifyIP_Hover.png);
+}
+CDiscoveryButtonsForm QPushButton#btnForceIP:pressed {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_ModifyIP_Pressed.png);
+}
+CDiscoveryButtonsForm QPushButton#btnForceIP:disabled {
+	border-image: url(Skins/Default/CamClient/Btn_DevList_ModifyIP_Disable.png);
+}
+QTreeView {
+	outline: 0;
+}
+QTreeView::item:hover {
+    background-color: rgba(66,66,67,44%);
+}
+QTreeView::item:selected {
+	background-color: rgba(66,66,67,76%);
+}
+
+QTreeView::branch:has-siblings:!adjoins-item {
+}
+QTreeView::branch {
+        image: none;
+}
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+        border-image: none;
+        image: url(Skins/Default/CamClient/Btn_Common_TreeUnfold_Normal.png);
+}
+QTreeView::branch:closed:has-children:hover {
+        border-image: none;
+        image: url(Skins/Default/CamClient/Btn_Common_TreeUnfold_Hover.png);
+}
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+        border-image: none;
+        image: url(Skins/Default/CamClient/Btn_Common_TreeFold_Normal.png);
+}
+QTreeView::branch:open:has-children:hover {
+        border-image: none;
+        image: url(Skins/Default/CamClient/Btn_Common_TreeFold_Hover.png);
+}
+
+
+CDiscoveryDevicesForm QTreeView::branch:!has-children:adjoins-item {
+        background: rgb(31, 32, 33);
+}
+
+/* 属性界面 */
+CPropertyForm QLabel#SpinBoxLabel{
+	background: #28292b;
+	color: #e5e5e5;
+	min-width: 20;
+	min-height: 10;
+}
+CPropertyForm QLabel#SpinBoxLabel:disabled {	
+	color: #9d9d9d;
+}
+CPropertyForm QFrame#frame{
+	border: 0px;
+}
+CPropertyForm QFrame#frameTitle{
+	background: #1C1C1C;
+	border-top: 1px solid #070707;
+}
+CPropertyForm QStackedWidget#stackedWidget{
+	background-color: #28292B;
+}
+CPropertyForm QPushButton#btnfeatures {
+	max-height: 42;
+	max-width: 1000;
+	min-width: 50px;
+	min-height: 42px;
+	background: #1C1C1C;
+	border: 0px solid #1C1C1C;
+	border-radius: 0px;
+	color: #737374;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+CPropertyForm QPushButton#btnfeatures:checked{
+	color: #FFFFFF;
+	border-bottom: 3px solid #FF2D2D;
+}
+CPropertyForm QPushButton#btnfeatures:hover{
+	color: #FFFFFF;
+}
+
+CPropertyForm QPushButton#btnSettings {
+	max-height: 42;
+	max-width: 1000;
+	min-width: 50px;
+	min-height: 42px;
+	background: #1C1C1C;
+	border: 0px solid #1C1C1C;
+	border-radius: 0px;
+	color: #737374;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+CPropertyForm QPushButton#btnSettings:checked{
+	color: #FFFFFF;
+	border-bottom: 3px solid #FF2D2D;
+}
+CPropertyForm QPushButton#btnSettings:hover{
+	color: #FFFFFF;
+}
+
+CPropertyForm QPushButton#btnImageFormat {
+	max-height:42;
+	max-width:1000;
+	min-width: 50px;
+	min-height: 42px;
+	background: #1C1C1C;
+	border: 0px solid #1C1C1C;
+	border-radius: 0px;
+	color: #737374;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+CPropertyForm QPushButton#btnImageFormat:checked{
+	color: #FFFFFF;
+	border-bottom: 3px solid #FF2D2D;
+}
+CPropertyForm QPushButton#btnImageFormat:hover{
+	color: #FFFFFF;
+}
+
+CPropertyForm QPushButton#btnGPIO {
+	max-height:42;
+	max-width:1000;
+	min-width: 50px;
+	min-height: 42px;
+	background: #1C1C1C;
+	border: 0px solid #1C1C1C;
+	border-radius: 0px;
+	color: #737374;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+CPropertyForm QPushButton#btnGPIO:checked{
+	color: #FFFFFF;
+	border-bottom: 3px solid #FF2D2D;
+}
+CPropertyForm QPushButton#btnGPIO:hover{
+	color: #FFFFFF;
+}
+CPropertyForm QPushButton#btnExpandProperty{
+    background:#28292b;
+	min-width: 18px;
+	max-width: 18px;
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Normal.png);
+	background-repeat: repeat-x;
+	background-position: left;
+	border-top: 1px solid #000000;
+}
+CPropertyForm QPushButton#btnExpandProperty:hover {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Hover.png);
+}
+CPropertyForm QPushButton#btnExpandProperty:pressed {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowRight_Pressed.png);
+}
+
+CPropertyForm QPushButton#btnCollpaseProperty{
+    background: rgba(0, 0, 0, 180);
+	min-width: 17px;
+	min-height: 32px;
+	max-width: 17px;
+	max-height:32px;
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Normal.png);
+	background-repeat: repeat-x;
+	background-position: left;
+}
+CPropertyForm QPushButton#btnCollpaseProperty:hover {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Hover.png);
+}
+CPropertyForm QPushButton#btnCollpaseProperty:pressed {
+	background-image: url(Skins/Default/CamClient/Btn_DevProperty_ArrowLeft_Pressed.png);
+}
+
+CPropertyFeaturesForm{
+	background: #28292b;
+}
+
+CPropertyFeaturesForm QTextEdit#txtTag
+{
+	margin-top: 10px;
+}
+
+CPropertyFeaturesForm QComboBox{
+    max-height:32;
+}
+
+CPropertyFeaturesForm QFrame#frame{
+	min-height:42;
+	max-height:42;
+}
+
+CPropertyFeaturesForm QToolButton#btnExpand {
+	max-height:22;
+	max-width:38;
+	border:0px solid #808080;
+	border-radius: 0px;
+	min-width: 38px;
+	min-height: 22px;
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_FoldUnfold_Normal.png);
+}
+CPropertyFeaturesForm QToolButton#btnExpand:hover {
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_FoldUnfold_Hover.png);
+}
+CPropertyFeaturesForm QToolButton#btnExpand:pressed {
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_FoldUnfold_Pressed.png);
+}
+
+CPropertyFeaturesForm QToolButton#btnTranslate {	
+	min-width: 22;
+	max-width:22;
+	min-height: 27;
+	max-height:27;
+	background-color:none;	
+	image: url(Skins/Default/CamClient/Icon_Navi_Language_Normal.png);
+}
+CPropertyFeaturesForm QToolButton#btnTranslate:hover {
+	image: url(Skins/Default/CamClient/Icon_Navi_Language_Hover.png);
+}
+CPropertyFeaturesForm QToolButton#btnTranslate:pressed {
+	image: url(Skins/Default/CamClient/Icon_Navi_Language_Pressed.png);
+}
+
+CPropertyFeaturesForm QTreeView{
+    show-decoration-selected: 1;
+    background-color: #28292B;
+    border: 0 solid #a6aaa8;
+    selection-background-color: #414244;
+    selection-color: #FFFFFF;
+    alternate-background-color: #1F2021;
+}
+
+/* 属性树按钮选项 */
+CPropertyFeaturesForm QWidget#myPushButton{
+    background: #212223;
+}
+
+CPropertyFeaturesForm QLineEdit, CPropertyFeaturesForm QAbstractSpinBox {
+	border: 1 solid #FF2D2D;
+	selection-background-color: #797c81;
+	selection-color: #FFFFFF;
+	background:rgb(33,34,35);
+}
+CPropertyFeaturesForm QLineEdit:focus, CPropertyFeaturesForm QAbstractSpinBox:focus{
+	border: 1 solid #FF2D2D;
+	selection-background-color: #797c81;
+	selection-color: #FFFFFF;
+	background:rgb(33,34,35);
+}
+
+CPropertyFeaturesForm QDoubleSpinBox::up-button, CPropertyFeaturesForm QSpinBox::up-button {
+	background-image: url(Skins/Default/CamClient/SpinBox_Common_Up_Normal.png);
+	border-image: url();
+	margin: 3, 0, 0, 0;
+	min-width: 18px;
+	max-width: 18px;
+	min-height: 10px;
+	max-height: 10px;
+	background-repeat: repeat-x;
+	background-position: top;
+}
+
+CPropertyFeaturesForm QDoubleSpinBox::down-button, CPropertyFeaturesForm QSpinBox::down-button {
+	background-image: url(Skins/Default/CamClient/SpinBox_Common_Down_Normal.png);
+	border-image: url();
+	margin: 2, 0, 0, 0;
+	min-width: 18px;
+	max-width: 18px;
+	min-height: 10px;
+	max-height: 10px;
+	background-repeat: repeat-x;
+	background-position: top;
+}
+
+CPropertyFeaturesForm QFrame#frame_bottom {
+    background: #1c1c1c;
+	border: 0px solid #000000;
+	min-height: 42px;
+	max-height: 42px;
+}
+CPropertyFeaturesForm QFrame#line,
+CPropertyFeaturesForm QFrame#line2 {
+    background: #3e3d3d;
+	border: 0px solid #000000;
+	min-width: 1px;
+	max-width: 1px;
+}
+
+/* 属性列表中按钮样式 */
+CPropertyFeaturesForm QPushButton:default, CPropertyFeaturesForm QPushButton[highlight="1"] {
+	background: #2e2f31;
+}
+CPropertyFeaturesForm QPushButton:default:hover, CPropertyFeaturesForm QPushButton[highlight="1"]:hover {
+	background: #323336;
+}
+CPropertyFeaturesForm QPushButton:default:pressed, CPropertyFeaturesForm QPushButton[highlight="1"]:pressed {
+	background: #28292b;
+}
+
+CPropertyFeaturesForm QToolButton#btnReset,
+CPropertyFeaturesForm QToolButton#btnSave {
+    background: #1c1c1c;
+	border: 0px solid #000000;
+}
+CPropertyFeaturesForm QToolButton#btnReset:hover,
+CPropertyFeaturesForm QToolButton#btnSave:hover {
+    background: #1c1c1c;
+	border: 0px solid #000000;
+	color: #FFFFFF;
+}
+CPropertyFeaturesForm QToolButton#btnReset {
+	min-width: 110px;
+}
+CPropertyFeaturesForm QToolButton#btnSave {
+	min-width: 85px;
+}
+
+CPropertyFeaturesForm QPushButton#btnClear {
+	min-width: 22;
+	min-height: 22;
+	max-width: 22;
+	max-height: 22;
+	padding: 0 0 0 0;
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_Search_Cancel_Normal.png);
+	background: #373839;
+	border-radius: 1;
+}
+CPropertyFeaturesForm QPushButton#btnClear:hover{
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_Search_Cancel_Hover.png);
+}
+CPropertyFeaturesForm QPushButton#btnClear:pressed{
+	border-image: url(Skins/Default/CamClient/Btn_DevProperty_Search_Cancel_Pressed.png);
+}
+CPropertyFeaturesForm QPushButton#btnClear:disabled{
+	border-image: url(Skins/Default/CamClient/Icon_DevProperty_Search.png);
+}
+
+CPropertyFeaturesForm QLineEdit#lineEditKey {
+	selection-background-color: #797c81;
+	selection-color: #FFFFFF;
+	background: #373839;
+	border-radius: 1;
+	margin-bottom: 1px;
+	border: 0px solid #FFFFFF;
+}
+CPropertyFeaturesForm QLineEdit#lineEditKey:focus {
+	border: 1px solid #FF2D2D;
+}
+
+CPropertyFeaturesForm QTextEdit{
+	background: #28292B;
+	border: 0px solid #000000;
+	selection-background-color: #797c81;
+	selection-color: #FFFFFF;
+}
+CPropertyFeaturesForm QTextEdit:focus{
+	border: 0 solid #000000;
+}
+CPropertyFeaturesForm QLabel#label_visibility{
+	max-width: 50;
+	min-width: 50;
+}
+
+/* 保存属性 Begin */
+CSaveFeaturesDlg {	
+	min-width: 350px;
+	min-height: 248px;
+	max-width: 350px;
+	max-height: 248px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+CSaveFeaturesDlg QLabel  {	
+	font-size: 12px;
+	color: #9d9d9d;
+}
+CSaveFeaturesDlg QFrame#line {
+	background-color: #121213;
+    min-height: 1px;
+	max-height: 1px;
+}
+/* 保存属性 End */
+
+/* CPropertySettingsForm */
+CPropertySettingsForm QDoubleSpinBox, CPropertySettingsForm QSpinBox {
+    min-height: 24px;
+	padding-right: 0px;
+	border: 0 solid #242424;
+	background: transparent;
+	color: #e5e5e5;
+	font-size:12;
+	min-width:65;
+	max-width:65;
+}
+CPropertySettingsForm QDoubleSpinBox:hover, CPropertySettingsForm QSpinBox:hover{
+	color: #FFFFFF;
+}
+CPropertySettingsForm QDoubleSpinBox:focus, CPropertySettingsForm QSpinBox:focus{
+	border: 1 solid #ff2d2d;
+}
+CPropertySettingsForm QDoubleSpinBox:disabled, CPropertySettingsForm QSpinBox:disabled{
+	background: transparent;
+	color: #9d9d9d;
+}
+
+CPropertySettingsForm QLabel{
+	min-width:112;
+	min-height:40;
+	max-width:112;
+	color:#B3B3B3;
+	font-size:12;
+}
+CPropertySettingsForm QSlider{
+ 	min-width:90;
+}
+CPropertySettingsForm QComboBox{
+	min-width: 168;
+	max-width: 185;
+	min-height: 26;
+}
+CPropertySettingsForm QWidget#widget{
+	background-color: #28292B;
+}
+CPropertySettingsForm QScrollArea{
+	border: 0px solid #000000;
+}
+CPropertySettingsForm QFrame#line_FrameRate{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_Exposure{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_GainGamma{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_Denoising{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_Sharpness{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_Brightness{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+CPropertySettingsForm QFrame#line_Contrast{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+
+/* CPropertyImageFormatForm */
+CPropertyImageFormatForm QWidget#scrollAreaWidgetContents{
+	background: #28292b;
+}
+CPropertyImageFormatForm QScrollArea{
+	border: 0px solid #000000;
+}
+CPropertyImageFormatForm QLabel{
+	min-width:80;
+	max-width:80;
+	color:#9d9d9d;
+	font-size:12;
+}
+CPropertyImageFormatForm QLabel#labelTitle{
+    color:#B3B3B3;
+}
+
+CPropertyImageFormatForm QSlider{
+ 	min-width:130;
+}
+
+CPropertyImageFormatForm QDoubleSpinBox, CPropertyImageFormatForm QSpinBox {
+    min-height: 24px;
+	padding-right: 0px;
+	border: 0 solid #242424;
+	background: transparent;
+	color: #e5e5e5;
+	font-size:12;
+	min-width:50;
+	max-width:50;
+}
+CPropertyImageFormatForm QDoubleSpinBox:hover, CPropertyImageFormatForm QSpinBox:hover{
+	color: #FFFFFF;
+}
+CPropertyImageFormatForm QDoubleSpinBox:focus, CPropertyImageFormatForm QSpinBox:focus{
+	border: 1 solid #ff2d2d;
+}
+CPropertySettingsForm QDoubleSpinBox:disabled, CPropertySettingsForm QSpinBox:disabled{
+	background: transparent;
+	color: #9d9d9d;
+}
+
+CPropertyImageFormatForm QComboBox{
+	min-width:60;
+	min-height: 24;
+}
+
+CPropertyImageFormatForm QFrame#line{
+	background-color: #1C1C1C;
+	max-height: 1;
+	border:0px solid #1C1C1C;
+}
+
+CPropertyImageFormatForm QPushButton{
+	min-width: 140px; 
+}
+
+/* CVideoManagerForm */
+CVideoManagerForm QWidget#videoControlForm
+{
+    background-color: rgb(41, 42, 43);
+}
+CVideoManagerForm QPushButton#btn_One {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn1_Normal.png); 
+}
+CVideoManagerForm QPushButton#btn_One:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn1_Hover.png);
+}
+
+CVideoManagerForm QPushButton#btn_One:pressed , QPushButton#btn_One:checked{	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn1_Pressed.png);
+}
+CVideoManagerForm QPushButton#btn_One:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn1_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btn_Two {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn2_Normal.png); 
+}
+CVideoManagerForm QPushButton#btn_Two:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn2_Hover.png);
+}
+CVideoManagerForm QPushButton#btn_Two:pressed, QPushButton#btn_Two:checked {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn2_Pressed.png);
+}
+CVideoManagerForm QPushButton#btn_Two:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn2_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btn_Four {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn4_Normal.png); 
+}
+CVideoManagerForm QPushButton#btn_Four:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn4_Hover.png);
+}
+CVideoManagerForm QPushButton#btn_Four:pressed ,QPushButton#btn_Four:checked{	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn4_Pressed.png);
+}
+CVideoManagerForm QPushButton#btn_Four:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn4_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btn_Nine {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn9_Normal.png); 
+}
+CVideoManagerForm QPushButton#btn_Nine:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn9_Hover.png);
+}
+CVideoManagerForm QPushButton#btn_Nine:pressed ,QPushButton#btn_Nine:checked{	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn9_Pressed.png);
+}
+CVideoManagerForm QPushButton#btn_Nine:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn9_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btn_Sixteen {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn16_Normal.png); 
+}
+CVideoManagerForm QPushButton#btn_Sixteen:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn16_Hover.png);
+}
+CVideoManagerForm QPushButton#btn_Sixteen:pressed, QPushButton#btn_Sixteen:checked  {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn16_Pressed.png);
+}
+CVideoManagerForm QPushButton#btn_Sixteen:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Scrn16_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btnFullScreen {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_FullScrn_Normal.png); 
+}
+CVideoManagerForm QPushButton#btnFullScreen:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_FullScrn_Hover.png);
+}
+CVideoManagerForm QPushButton#btnFullScreen:pressed {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_FullScrn_Pressed.png);
+}
+CVideoManagerForm QPushButton#btnFullScreen:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_FullScrn_Disable.png);
+}
+
+CVideoManagerForm QPushButton#btnFullScreen:checked {
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_ExitFullScrn_Normal.png);
+}
+CVideoManagerForm QPushButton#btnFullScreen:checked:hover {
+	border-image: url(Skins/Default/CamClient/Btn_Video_ExitFullScrn_Hover.png);
+}
+CVideoManagerForm QPushButton#btnFullScreen:checked:pressed {
+	border-image: url(Skins/Default/CamClient/Btn_Video_ExitFullScrn_Pressed.png);
+}
+CVideoManagerForm QPushButton#btnFullScreen:checked:disabled {
+	border-image: url(Skins/Default/CamClient/Btn_Video_ExitFullScrn_Disable.png);
+}
+
+
+CVideoManagerForm QToolButton::menu-indicator{
+	image: None;
+}
+CVideoManagerForm QToolButton#btnShowMenu {	
+	min-width: 26px;
+	min-height: 6px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Video_Settings_Normal.png); 
+}
+CVideoManagerForm QToolButton#btnShowMenu:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Settings_Hover.png);
+}
+CVideoManagerForm QToolButton#btnShowMenu:pressed {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Settings_Pressed.png);
+}
+CVideoManagerForm QToolButton#btnShowMenu:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Video_Settings_Disable.png);
+}
+
+CMultiVideoForm  QWidget#widget {
+	background-color: rgb(39, 39, 39);
+	border: 1px solid; 
+}
+
+CVideoDisplayForm  QFrame#frame_videoBak {
+	background: rgb(39,39,39);
+}
+
+CVideoDisplayForm QWidget#CVideoDisplayForm {
+	background: #2d2d2d;
+}
+
+CVideoBackgroundForm QFrame#frame_BK{
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_DevConnected.png");
+}
+
+CVideoBackgroundForm QLabel#label_ErrMsg{
+    color: #FF2D2D;
+}
+
+CVideoDisplayForm QFrame#frame_BK:disabled{
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_DevConnected_Error.png");
+}
+
+
+CVideoTitleForm QFrame#frame {
+	min-height: 24px;
+	max-height: 24px;
+	background: #373737;
+}
+
+CVideoTitleForm QFrame{
+    border:0px solid #000000;
+}
+
+CVideoTitleForm QLabel#label_DeviceName {
+	background: #373737;
+	color: rgba(138,138,139,80%);
+}
+CVideoTitleForm QLabel#lbRecv,QLabel#lbRecvBand,QLabel#lbRecvFPS,QLabel#lbRecvTotalCnt, 
+CVideoTitleForm QLabel#lbDisp,QLabel#lbDispFPS {
+	background: #373737;
+	color: #959595;
+}
+CVideoTitleForm QLabel#lbDispFPS {
+	margin-right: 5px;	
+}
+
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore {
+	min-width: 22px;
+	min-height: 22px;
+	max-width: 22px;
+	max-height: 22px;
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinMaximize_Normal.png");
+	margin-left: 0px;
+	margin-right: 4px;	
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:hover {
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinMaximize_Hover.png");
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:pressed {	
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinMaximize_Pressed.png");
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:disabled {	
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinMaximize_Disable.png");
+}
+
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:checked {
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinRestore_Normal.png");
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:checked:hover {
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinRestore_Hover.png");
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:checked:pressed {	
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinRestore_Pressed.png");
+}
+CVideoTitleForm QToolButton#toolButton_MaximizeRestore:checked:disabled {	
+	background: none;
+	border-image: url("Skins/Default/CamClient/Btn_Video_WinRestore_Disable.png");
+}
+
+
+CVideoStatusForm QFrame#frame {
+	min-height: 28px;
+	max-height: 28px;
+	background: #201e1e;
+}
+
+CVideoStatusForm QLabel {
+	color: #959595;
+}
+
+CVideoStatusForm QToolButton#Btn_Filter {	
+	min-width: 22px;
+	min-height: 22px;
+	max-width: 22px;
+	max-height: 22px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Normal.png); 
+}
+CVideoStatusForm QToolButton#Btn_Filter:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Hover.png);
+}
+CVideoStatusForm QToolButton#Btn_Filter:pressed {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Pressed.png);
+}
+CVideoStatusForm QToolButton#Btn_Filter:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Disable.png);
+}
+
+CVideoForm QFrame#frame_Video{
+	border: 1px solid rgb(24, 24, 24);
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_Idle.png");
+	padding-bottom: 30px;
+	padding-top: 24px;
+	min-width: 190px;
+}
+
+CVideoForm QFrame#frame_Video[status="0"]{
+	border: 1px solid rgb(24, 24, 24);
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_Idle.png");
+	padding-bottom: 30px;
+	padding-top: 24px;
+}
+CVideoForm QFrame#frame_Video[status="1"] {
+	border: 1px solid rgb(255, 45, 45);
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_Idle.png");
+	padding-bottom: 30px;
+	padding-top: 24px;
+}
+CVideoForm QFrame#frame_Video[status="2"]{
+	border: 1px solid rgb(24, 24, 24);
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_Idle.png");
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+CVideoForm QFrame#frame_Video[status="3"] {
+	border: 1px solid rgb(255, 45, 45);
+	background-color:  #272727;
+	image: url("Skins/Default/CamClient/Icon_Video_ScrnBG_Idle.png");
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+/* 录像信息窗口 Begin */
+CRecordInfoDlg {
+	background: #373737;
+	color: #ffffff;
+}
+CRecordInfoDlg QFrame#line{
+	min-height: 1px;
+	max-height: 1px;
+	background: #1C1C1C;
+}
+CRecordInfoDlg QLabel#lbMovie{
+	min-width: 26px;
+	max-width: 26px;
+}
+CRecordInfoDlg QToolButton#btnMoreFunc{
+	min-width: 22px;
+	max-width: 22px;
+}
+CRecordInfoDlg QToolButton#btnMoreFunc {
+		background: none;
+		image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Normal.png");
+}
+CRecordInfoDlg QToolButton#btnMoreFunc:hover {
+		background: none;
+		image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Hover.png");
+}
+CRecordInfoDlg QToolButton#btnMoreFunc:pressed {	
+		background: none;
+		image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Pressed.png");
+}
+CRecordInfoDlg QToolButton#btnMoreFunc:disabled {	
+		background: none;
+		image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Disable.png");
+}
+/* 录像信息窗口 End */
+
+CVideoControlForm QWidget#CVideoControlForm {
+	min-height: 44px;
+	max-height: 44px;
+}
+CVideoMoreFuncForm QWidget#CVideoMoreFuncForm {
+	min-height: 48px;
+	max-height: 48px;
+}
+
+CVideoControlForm QFrame#frame_VideoControl {
+	background: #161616;
+}
+
+CVideoMoreFuncForm QFrame#frame_VideoControl {
+	background: #2a2b2c;
+}
+CVideoControlForm QToolButton , CVideoMoreFuncForm  QToolButton{
+	min-width: 28;	
+	max-width: 28;	
+	min-height: 28;
+	max-height: 28;		
+	background: none;
+	border: 0;
+}
+
+CVideoControlForm QFrame#line, CVideoControlForm QFrame#line_2,  CVideoControlForm QFrame#line_3, CVideoMoreFuncForm QFrame#line, CVideoMoreFuncForm QFrame#line_2,  CVideoMoreFuncForm QFrame#line_3{
+	background-color: #3e3d3d;
+	min-height: 20px;
+	max-height: 20px;
+}
+
+/* 开始按钮 */
+CVideoControlForm QToolButton#btnPlay,CVideoMoreFuncForm QToolButton#btnPlay {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Play_Normal.png");
+}
+CVideoControlForm QToolButton#btnPlay:hover, CVideoMoreFuncForm QToolButton#btnPlay[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Play_Hover.png");
+}
+CVideoControlForm QToolButton#btnPlay:pressed , CVideoMoreFuncForm QToolButton#btnPlay:pressed{	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Play_Pressed.png");
+}
+CVideoControlForm QToolButton#btnPlay:disabled ,CVideoMoreFuncForm QToolButton#btnPlay:disabled{	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Play_Disable.png");
+}
+
+
+CVideoControlForm QToolButton#btnPlay:checked ,CVideoMoreFuncForm QToolButton#btnPlay:checked{
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Stop_Normal.png");
+}
+CVideoControlForm QToolButton#btnPlay:checked:hover ,CVideoMoreFuncForm QToolButton#btnPlay:checked[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Stop_Hover.png");
+}
+CVideoControlForm QToolButton#btnPlay:checked:pressed ,CVideoMoreFuncForm QToolButton#btnPlay:checked:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Stop_Pressed.png");
+}
+CVideoControlForm QToolButton#btnPlay:checked:disabled ,CVideoMoreFuncForm QToolButton#btnPlay:checked:disabled{	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Stop_Disable.png");
+}
+
+/* 单张保存按钮 */
+CVideoControlForm QToolButton#btnSnapShot ,CVideoMoreFuncForm QToolButton#btnSnapShot{
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SnapShot_Normal.png");
+}
+CVideoControlForm QToolButton#btnSnapShot:hover ,CVideoMoreFuncForm QToolButton#btnSnapShot[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SnapShot_Hover.png");
+}
+CVideoControlForm QToolButton#btnSnapShot:pressed,CVideoMoreFuncForm QToolButton#btnSnapShot:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SnapShot_Pressed.png");
+}
+CVideoControlForm QToolButton#btnSnapShot:disabled ,CVideoMoreFuncForm QToolButton#btnSnapShot:disabled{	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SnapShot_Disable.png");
+}
+
+/* 连续保存按钮 */
+CVideoControlForm QToolButton#btnSaveImages {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Normal.png");
+}
+CVideoControlForm QToolButton#btnSaveImages:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Hover.png");
+}
+CVideoControlForm QToolButton#btnSaveImages:pressed, QToolButton#btnSaveImages:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Pressed.png");
+}
+CVideoControlForm QToolButton#btnSaveImages:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Disable.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnSaveImages {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnSaveImages[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnSaveImages:pressed, CVideoMoreFuncForm QToolButton#btnSaveImages:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnSaveImages:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_SaveImages_Disable.png");
+}
+
+/* 录像按钮 */
+CVideoControlForm QToolButton#btnRecordVideo {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Normal.png");
+}
+CVideoControlForm QToolButton#btnRecordVideo:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Hover.png");
+}
+CVideoControlForm QToolButton#btnRecordVideo:pressed, QToolButton#btnRecordVideo:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Pressed.png");
+}
+CVideoControlForm QToolButton#btnRecordVideo:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Disable.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnRecordVideo {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnRecordVideo[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnRecordVideo:pressed, CVideoMoreFuncForm QToolButton#btnRecordVideo:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnRecordVideo:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Videotape_Disable.png");
+}
+
+/* 放大按钮 */
+CVideoControlForm QToolButton#btnZoomIn {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Normal.png");
+}
+CVideoControlForm QToolButton#btnZoomIn:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Hover.png");
+}
+CVideoControlForm QToolButton#btnZoomIn:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Pressed.png");
+}
+CVideoControlForm QToolButton#btnZoomIn:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Disable.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnZoomIn {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomIn[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomIn:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomIn:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomIn_Disable.png");
+}
+
+/* 缩小按钮 */
+CVideoControlForm QToolButton#btnZoomOut {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Normal.png");
+}
+CVideoControlForm QToolButton#btnZoomOut:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Hover.png");
+}
+CVideoControlForm QToolButton#btnZoomOut:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Pressed.png");
+}
+CVideoControlForm QToolButton#btnZoomOut:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Disable.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnZoomOut {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomOut[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomOut:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomOut:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomOut_Disable.png");
+}
+
+/* 居中按钮 */
+CVideoControlForm QToolButton#btnGotoCenter {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Normal.png");
+}
+CVideoControlForm QToolButton#btnGotoCenter:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Hover.png");
+}
+CVideoControlForm QToolButton#btnGotoCenter:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Pressed.png");
+}
+CVideoControlForm QToolButton#btnGotoCenter:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Disable.png");
+}
+CVideoMoreFuncForm QToolButton#btnGotoCenter {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Normal.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnGotoCenter[hover="1"]  {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Hover.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnGotoCenter:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnGotoCenter:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_GotoCenter_Disable.png");
+}
+/* 原始图像大小 */
+CVideoControlForm QToolButton#btnZoom100 {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Normal.png");
+}
+CVideoControlForm QToolButton#btnZoom100:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Hover.png");
+}
+CVideoControlForm QToolButton#btnZoom100:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Pressed.png");
+}
+CVideoControlForm QToolButton#btnZoom100:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Disable.png");
+}
+
+CVideoMoreFuncForm QToolButton#btnZoom100 {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoom100[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoom100:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoom100:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_Zoom100_Disable.png");
+}
+
+/* 适合窗口大小 */
+CVideoControlForm QToolButton#btnZoomFit {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Normal.png");
+}
+CVideoControlForm QToolButton#btnZoomFit:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Hover.png");
+}
+CVideoControlForm QToolButton#btnZoomFit:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Pressed.png");
+}
+CVideoControlForm QToolButton#btnZoomFit:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Disable.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomFit {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomFit[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomFit:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnZoomFit:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ZoomFit_Disable.png");
+}
+/* ReverseX */
+CVideoControlForm QToolButton#btnReverseX {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Normal.png");
+}
+CVideoControlForm QToolButton#btnReverseX:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Hover.png");
+}
+CVideoControlForm QToolButton#btnReverseX:pressed, QToolButton#btnReverseX:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Pressed.png");
+}
+CVideoControlForm QToolButton#btnReverseX:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Disable.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseX {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseX[hover="1"]{
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseX:pressed, CVideoMoreFuncForm QToolButton#btnReverseX:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseX:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseX_Disable.png");
+}
+/* ReverseY */
+CVideoControlForm QToolButton#btnReverseY {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Normal.png");
+}
+CVideoControlForm QToolButton#btnReverseY:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Hover.png");
+}
+CVideoControlForm QToolButton#btnReverseY:pressed, QToolButton#btnReverseY:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Pressed.png");
+}
+CVideoControlForm QToolButton#btnReverseY:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Disable.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseY {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Normal.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseY[hover="1"] {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Hover.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseY:pressed, CVideoMoreFuncForm QToolButton#btnReverseY:checked {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Pressed.png");
+}
+CVideoMoreFuncForm QToolButton#btnReverseY:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_ReverseY_Disable.png");
+}
+
+/* MoreFunc */
+CVideoControlForm QToolButton#btnMoreFunc {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Normal.png");
+}
+CVideoControlForm QToolButton#btnMoreFunc:hover {
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Hover.png");
+}
+CVideoControlForm QToolButton#btnMoreFunc:pressed {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Pressed.png");
+}
+CVideoControlForm QToolButton#btnMoreFunc:disabled {	
+		background: none;
+		border-image: url("Skins/Default/CamClient/Btn_Video_MoreFunc_Disable.png");
+}
+
+CVideoControlForm QComboBox#comboBox_AcqMode,CVideoMoreFuncForm QComboBox#comboBox_AcqMode {
+	min-height:22px;
+	max-height:22px;
+	min-width: 86px;
+	max-width: 86px;
+	background: transparent;
+}
+ImageSaveInfoDlg {
+	min-height: 40px;
+	max-height: 40px;
+	min-width: 230px;
+	max-width: 230px;
+	background: transparent;
+}
+
+ImageSaveInfoDlg QFrame {
+	color: rgb(255,255,255);	
+}
+
+ImageSaveInfoDlg QFrame#frame_bk {
+	background: rgba(0, 0, 0, 78%);
+	border-radius: 20px;
+}
+
+ImageSaveInfoDlg QLabel#label_logo {
+	min-width: 12px;
+	min-height: 12px;
+	max-width: 12px;
+	max-height: 12px;
+	border-image: url(Skins/Default/CamClient/Icon_SaveImage_Tips_OK.png);
+}
+
+ImageSaveInfoDlg QToolButton#btnView {
+	border: 0px;
+	color: #ff2d2d;
+	background: none;
+	min-width: 34px;
+	max-width: 34px;
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::item {
+	min-width: 86px;
+	min-height: 38px;
+	max-width: 86px;
+	max-height: 38px;
+	padding-left: 46px;
+} 
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator {
+	left: 20px;
+	min-width: 14px;
+	min-height: 14px;
+	max-width: 14px;
+	max-height: 14px;
+	
+}
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:unchecked {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Normal.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:unchecked:hover {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Hover.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:unchecked:pressed {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Pressed.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:unchecked:disabled {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Disable.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:checked {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Normal.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:checked:hover {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Hover.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:checked:pressed {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png");
+}
+
+CVideoStatusForm QMenu#menuStatusFilter::indicator:non-exclusive:checked:disabled {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Disable.png");
+}
+
+CVideoStatusForm QFrame{
+    border: 0px solid #000000;
+}
+
+/* 等待对话框 */
+CWaitDialog {
+	background: #292a2b;
+	border: 1px solid #171717;
+}
+CWaitDialog QFrame#frameTitle{
+	min-height: 36px;
+	background: #2f2f30;
+	border-bottom: 1px solid #121213;
+	margin-left: 1px;
+	margin-top: 1px;
+	margin-right: 1px;
+}
+CWaitDialog QLabel#waitLabel{
+	min-width: 100px;
+	min-height: 60px;
+}
+CWaitDialog QLabel#lbTitle{
+	color: white;
+	min-width: 32px;
+}
+CWaitDialog QLabel#labTitleBar{
+	padding: 0 6;
+	min-width: 32px;
+}
+CWaitDialog QLabel#textLabel{
+	margin-left:30;
+	margin-right: 30;
+}
+
+CWaitGifForm QFrame#frame{
+	background: #272727;
+	min-height:0;
+	max-height:100000;
+}
+CWaitGifForm QLabel{
+	color: #d3d3d3;
+}
+
+
+/* 所有弹框的共有属性设置 Begin */
+CCommonDlg,
+CSetIPDlg,
+CLogInDlg,
+CAccountManagementDlg,
+CSaveFeaturesDlg {	
+	background-color: #292a2b;	
+}
+
+CCommonDlg CCommonTitleBar QWidget#widGlobol,
+CSetIPDlg CCommonTitleBar QWidget#widGlobol,
+CLogInDlg CCommonTitleBar QWidget#widGlobol,
+CAccountManagementDlg CCommonTitleBar QWidget#widGlobol,
+CSaveFeaturesDlg CCommonTitleBar QWidget#widGlobol {
+	background-color: #2f2f30;
+	border-radius: 2px 2px 0px 0px;
+}
+CCommonDlg CCommonTitleBar QLabel#lbTitle,
+CSetIPDlg CCommonTitleBar QLabel#lbTitle,
+CLogInDlg CCommonTitleBar QLabel#lbTitle,
+CAccountManagementDlg CCommonTitleBar QLabel#lbTitle,
+CSaveFeaturesDlg CCommonTitleBar QLabel#lbTitle {	
+	font-size: 16px;
+	color: #ffffff;
+	background-color: #2f2f30;
+}
+CCommonDlg QToolButton#btnClose,
+CSetIPDlg QToolButton#btnClose,
+CLogInDlg QToolButton#btnClose,
+CAccountManagementDlg QToolButton#btnClose,
+CSaveFeaturesDlg QToolButton#btnClose {
+	min-width: 24px;
+	min-height: 24px;
+	max-width: 24px;
+	max-height: 24px;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Normal.png");
+	background-color: #2f2f30;
+}
+CCommonDlg QToolButton#btnClose:hover,
+CSetIPDlg QToolButton#btnClose:hover,
+CLogInDlg QToolButton#btnClose:hover,
+CAccountManagementDlg QToolButton#btnClose:hover,
+CSaveFeaturesDlg QToolButton#btnClose:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Hover.png");
+}
+CCommonDlg QToolButton#btnClose:pressed,
+CSetIPDlg QToolButton#btnClose:pressed,
+CLogInDlg QToolButton#btnClose:pressed,
+CAccountManagementDlg QToolButton#btnClose:pressed,
+CSaveFeaturesDlg QToolButton#btnClose:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Pressed.png");
+}
+
+CCommonDlg QPushButton[highlight="1"],
+CSetIPDlg QPushButton[highlight="1"],
+CLogInDlg QPushButton[highlight="1"],
+CAccountManagementDlg QPushButton[highlight="1"],
+CSaveFeaturesDlg QPushButton[highlight="1"] {
+	min-width: 80px;
+	min-height: 32px;
+	max-width: 80px;
+	max-height: 32px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+CCommonDlg QPushButton[highlight="1"],
+CSetIPDlg QPushButton[highlight="1"],
+CLogInDlg QPushButton[highlight="1"],
+CAccountManagementDlg QPushButton[highlight="1"],
+CSaveFeaturesDlg QPushButton[highlight="1"] {		
+	color: #e2e2e2;
+	background-color: #4c4d4e;
+}
+CCommonDlg QPushButton[highlight="1"]:hover,
+CSetIPDlg QPushButton[highlight="1"]:hover,
+CLogInDlg QPushButton[highlight="1"]:hover,
+CAccountManagementDlg QPushButton[highlight="1"]:hover,
+CSaveFeaturesDlg QPushButton[highlight="1"]:hover {
+	color: #ffffff ;
+	background-color: #545557;
+} 
+CCommonDlg QPushButton[highlight="1"]:pressed,
+CSetIPDlg QPushButton[highlight="1"]:pressed,
+CLogInDlg QPushButton[highlight="1"]:pressed,
+CAccountManagementDlg QPushButton[highlight="1"]:pressed,
+CSaveFeaturesDlg QPushButton[highlight="1"]:pressed {
+	color: #ffffff;
+	background-color: #48494a ;
+} 
+CCommonDlg QPushButton[highlight="1"]:disabled,
+CSetIPDlg QPushButton[highlight="1"]:disabled,
+CLogInDlg QPushButton[highlight="1"]:disabled,
+CAccountManagementDlg QPushButton[highlight="1"]:disabled,
+CSaveFeaturesDlg QPushButton[highlight="1"]:disabled {
+	color: #7a7d7f;
+	background-color: #48494a;
+} 
+CCommonDlg QPushButton[highlight="0"],
+CSetIPDlg QPushButton[highlight="0"],
+CLogInDlg QPushButton[highlight="0"],
+CAccountManagementDlg QPushButton[highlight="0"],
+CSaveFeaturesDlg QPushButton[highlight="0"] {
+	min-width: 80px;
+	min-height: 30px;
+	max-width: 80px;
+	max-height: 30px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+CCommonDlg QPushButton[highlight="0"],
+CSetIPDlg QPushButton[highlight="0"],
+CLogInDlg QPushButton[highlight="0"],
+CAccountManagementDlg QPushButton[highlight="0"],
+CSaveFeaturesDlg QPushButton[highlight="0"] {		
+	color: #979797;
+	background-color: #292a2b;
+	border: 1px solid #555555;
+}
+CCommonDlg QPushButton[highlight="0"]:hover,
+CSetIPDlg QPushButton[highlight="0"]:hover,
+CLogInDlg QPushButton[highlight="0"]:hover,
+CAccountManagementDlg QPushButton[highlight="0"]:hover,
+CSaveFeaturesDlg QPushButton[highlight="0"]:hover {
+	color: #ffffff ;
+	background-color: #545557;
+	border: 1px solid #555555;
+} 
+CCommonDlg QPushButton[highlight="0"]:pressed,
+CSetIPDlg QPushButton[highlight="0"]:pressed,
+CLogInDlg QPushButton[highlight="0"]:pressed,
+CAccountManagementDlg QPushButton[highlight="0"]:pressed,
+CSaveFeaturesDlg QPushButton[highlight="0"]:pressed {
+	color: #ffffff;
+	background-color: #48494a ;  
+	border: 1px solid #555555;
+} 
+CCommonDlg QPushButton[highlight="0"]:disabled,
+CSetIPDlg QPushButton[highlight="0"]:disabled,
+CLogInDlg QPushButton[highlight="0"]:disabled,
+CAccountManagementDlg QPushButton[highlight="0"]:disabled,
+CSaveFeaturesDlg QPushButton[highlight="0"]:disabled {
+	color: #515253;
+	background-color: #292a2b;
+	border: 1px solid #48494a;
+} 
+
+QLineEdit[dialog="1"],
+QComboBox[dialog="1"] {
+    min-height: 24px;
+	max-height: 24px;
+	border: 1px solid #242424;
+	padding-left: 10px;
+}
+QLineEdit[dialog="1"]:focus,
+QComboBox[dialog="1"]:focus {
+	border: 1px solid #ff2d2d;
+}
+
+CCommonDlg QCheckBox {	
+	color: #9d9d9d;
+}
+/* 所有弹框的共有属性设置 End */
+
+/* 关于软件 Begin */
+CHelpDlg {	
+	min-width: 452px;
+	min-height: 362px;
+	max-width: 452px;
+	max-height: 362px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+
+CHelpDlg QFrame#line1 {
+	background-color: #121213;
+}
+
+CHelpDlg QWidget#widgetLogo {
+	image: url("Skins/Default/CamClient/Icon_About_Logo_App.png");
+}
+
+CHelpDlg QLabel#lbVersion {	
+	font-size: 16px;
+	color: #ffffff;
+}
+
+CHelpDlg QLabel#lbCopyRight {
+	min-width: 14px;
+	font-size: 12px;
+	color: #a6a6a6;
+}
+
+CHelpDlg QFrame#line2 {
+	background-color: rgb(55, 55, 55);
+}
+/* 关于软件 End */
+
+/* 设置IP界面 Begin */
+CSetIPDlg {	
+	min-width: 392px;
+	min-height: 581px;
+	max-width: 392px;
+	max-height: 581px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+
+CSetIPDlg QLabel,
+CSetIPDlg QCheckBox  {	
+	font-size: 12px;
+	color: #9d9d9d;
+}
+
+CSetIPDlg QLabel#lbIconBrown,
+CSetIPDlg QLabel#lbIconBlue {
+	background-color: #ff2d2d;
+}
+
+CSetIPDlg QLineEdit {
+	padding-left: 16px;
+}
+
+CSetIPDlg QFrame#line {
+	background-color: #121213;
+}
+CSetIPDlg QFrame#line_2 {
+	border: 2px dotted rgba(0, 0, 0, 30%);
+}
+CSetIPDlg QFrame#line_3 {
+	background-color: rgb(55, 55, 55);
+}
+/* 设置IP界面 End */
+
+CSetDevUserIDDlg{
+	border-radius: 2px;
+	border: 1px solid #171717;
+	background-color: #292a2b;	
+}
+CSetDevUserIDDlg QPushButton#btnOk{
+	min-width: 60px;
+	min-height: 32px;
+	max-width: 60px;
+	max-height: 32px;
+}
+CSetDevUserIDDlg QPushButton#btnCancel{
+	min-width: 60px;
+	min-height: 32px;
+	max-width: 60px;
+	max-height: 32px;
+}
+
+CSetDevUserIDDlg QFrame#line1 {
+	background-color: #171717;
+}
+
+CSetDevUserIDDlg QFrame#line2 {
+	background-color: rgb(55, 55, 55);
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+CSetDevUserIDDlg QPushButton:default{
+	min-width: 80px;
+	min-height: 32px;
+	max-width: 80px;
+	max-height: 32px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+
+CSetDevUserIDDlg QPushButton:default {		
+	color: #e2e2e2;
+	background-color: #4c4d4e;
+}
+CSetDevUserIDDlg QPushButton:default:hover {
+	color: #ffffff ;
+	background-color: #545557;
+}
+CSetDevUserIDDlg QPushButton:default:pressed {
+	color: #ffffff;
+	background-color: #48494a ;
+}
+CSetDevUserIDDlg QPushButton:default:disabled {
+	color: #7a7d7f;
+	background-color: #48494a;
+}
+CSetDevUserIDDlg QPushButton{
+	min-width: 80px;
+	min-height: 30px;
+	max-width: 80px;
+	max-height: 30px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+CSetDevUserIDDlg QPushButton{		
+	color: #979797;
+	background-color: #292a2b;
+	border: 1px solid #555555;
+}
+CSetDevUserIDDlg QPushButton:hover {
+	color: #ffffff ;
+	background-color: #545557;
+	border: 1px solid #555555;
+}
+CSetDevUserIDDlg QPushButton:pressed {
+	color: #ffffff;
+	background-color: #48494a ;  
+	border: 1px solid #555555;
+}
+CSetDevUserIDDlg QPushButton:disabled {
+	color: #515253;
+	background-color: #292a2b;
+	border: 1px solid #48494a;
+}
+
+/* 设置单播 Begin */
+CUnicastDlg{
+	border-radius: 2px;
+	border: 1px solid #171717;
+	background-color: #292a2b;	
+}
+CUnicastDlg QPushButton#btnOk{
+	min-width: 60px;
+	min-height: 32px;
+	max-width: 60px;
+	max-height: 32px;
+}
+CUnicastDlg QPushButton#btnCancel{
+	min-width: 60px;
+	min-height: 32px;
+	max-width: 60px;
+	max-height: 32px;
+}
+
+CUnicastDlg QFrame#line1 {
+	background-color: #171717;
+}
+
+CUnicastDlg QFrame#line2 {
+	background-color: rgb(55, 55, 55);
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+CUnicastDlg QPushButton:default{
+	min-width: 80px;
+	min-height: 32px;
+	max-width: 80px;
+	max-height: 32px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+
+CUnicastDlg QPushButton:default {		
+	color: #e2e2e2;
+	background-color: #4c4d4e;
+}
+CUnicastDlg QPushButton:default:hover {
+	color: #ffffff ;
+	background-color: #545557;
+}
+CUnicastDlg QPushButton:default:pressed {
+	color: #ffffff;
+	background-color: #48494a ;
+}
+CUnicastDlg QPushButton:default:disabled {
+	color: #7a7d7f;
+	background-color: #48494a;
+}
+CUnicastDlg QPushButton{
+	min-width: 80px;
+	min-height: 30px;
+	max-width: 80px;
+	max-height: 30px;
+	font-size: 12px;
+	border-radius: 1px;
+}
+CUnicastDlg QPushButton{		
+	color: #979797;
+	background-color: #292a2b;
+	border: 1px solid #555555;
+}
+CUnicastDlg QPushButton:hover {
+	color: #ffffff ;
+	background-color: #545557;
+	border: 1px solid #555555;
+}
+CUnicastDlg QPushButton:pressed {
+	color: #ffffff;
+	background-color: #48494a ;  
+	border: 1px solid #555555;
+}
+CUnicastDlg QPushButton:disabled {
+	color: #515253;
+	background-color: #292a2b;
+	border: 1px solid #48494a;
+}
+/* 设置单播 End */
+
+/* 事件通知界面 Begin */
+CEventMonitorDlg {	
+	min-width: 842px;
+	min-height: 417px;
+	
+	border-radius: 1px;
+	border: 1px solid #171717;
+}
+
+CEventMonitorDlg QLabel{	
+	font-size: 12px;
+	color: #9d9d9d;
+}
+
+CEventMonitorDlg QFrame#line1 {
+	background-color: #121213;
+}
+CEventMonitorDlg QFrame#line2 {
+	background-color: #121213;
+}
+CEventMonitorDlg QFrame#line3 {
+	background-color: rgb(55, 55, 55);
+}
+
+CEventMonitorDlg QToolButton#btnClear {	
+	min-height: 30px;
+	max-height: 30px;
+	background-color: #4c4d4e;
+	spacing: 7px;
+	color: #e2e2e2;
+	padding-left: 14px;
+	padding-right: 12px;
+}
+CEventMonitorDlg QToolButton#btnClear:hover {	
+	color: #ffffff ;
+	background-color: #545557;
+}
+CEventMonitorDlg QToolButton#btnClear:pressed {	
+	color: #ffffff;
+	background-color: #48494a ;
+}
+
+CEventMonitorDlg QPushButton#btnSaveAs {
+	min-width: 26px;
+	min-height: 26px;
+	max-width: 26px;
+	max-height: 26px;
+	background-color: #292a2b;
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Normal.png");
+}
+CEventMonitorDlg QPushButton#btnSaveAs:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Hover.png");
+}
+CEventMonitorDlg QPushButton#btnSaveAs:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Pressed.png");
+}
+CEventMonitorDlg QPushButton#btnSaveAs:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Disable.png");
+}
+
+CEventMonitorDlg QTableWidget#tableWidget {
+	min-height: 120px;	
+	background-color:  #292a2b;
+	alternate-background-color: rgba(31, 32, 33, 58%);
+	gridline-color:  #292a2b;
+	border: 0px solid #242424;
+	color: #c9c9c9;
+}
+CEventMonitorDlg QTableWidget QHeaderView::section {
+	min-height: 40px;
+	max-height: 40px;
+	background-color: #1c1c1c;
+	color: #9d9d9d;
+	border: 0px solid #242424;
+}
+CEventMonitorDlg QTableWidget::item {
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 0px solid #242424;
+}
+CEventMonitorDlg QTableWidget::item::selected {
+	background-color:  #414244;
+	color: #FFFFFF;
+}
+/* 事件通知界面 End */
+
+/* 拉流统计信息 Begin */
+CStatisticDlg {	
+	min-width: 732px;
+	min-height: 287px;
+	max-height: 678px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+
+CStatisticDlg QFrame#line1 {
+	background-color: #121213;
+}
+CStatisticDlg QFrame#line2 {
+	background-color: #121213;
+}
+CStatisticDlg QFrame#line3 {
+	background-color: rgb(55, 55, 55);
+}
+
+CStatisticDlg QToolButton#btnFilter {	
+	min-width: 26px;
+	min-height: 26px;
+	max-width: 26px;
+	max-height: 26px;
+	background: transparent;
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Normal.png); 
+}
+CStatisticDlg QToolButton#btnFilter:hover {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Hover.png);
+}
+CStatisticDlg QToolButton#btnFilter:pressed {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Pressed.png);
+}
+CStatisticDlg QToolButton#btnFilter:disabled {	
+	border-image: url(Skins/Default/CamClient/Btn_Common_Filter_Disable.png);
+}
+CStatisticDlg QToolButton::menu-indicator{
+	image: None;
+}
+
+CStatisticDlg QMenu#menuFilter::item {
+	min-width: 86px;
+	min-height: 38px;
+	max-width: 86px;
+	max-height: 38px;
+	padding-left: 46px;
+} 
+CStatisticDlg QMenu#menuFilter::indicator {
+	left: 20px;
+	min-width: 14px;
+	min-height: 14px;
+	max-width: 14px;
+	max-height: 14px;
+	
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:unchecked {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Normal.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:unchecked:hover {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Hover.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:unchecked:pressed {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Pressed.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:unchecked:disabled {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Unchecked_Disable.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:checked {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Normal.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:checked:hover {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Hover.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:checked:pressed {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Pressed.png");
+}
+CStatisticDlg QMenu#menuFilter::indicator:non-exclusive:checked:disabled {
+	image: url("Skins/Default/CamClient/CheckBox_Common_Checked_Disable.png");
+}
+
+CStatisticDlg QTableWidget#tableWidget {
+	min-height: 120px;
+	background-color:  #292a2b;
+	alternate-background-color: rgba(31, 32, 33, 58%);
+	gridline-color:  #292a2b;
+	border: 0px solid #242424;
+	color: #e5e5e5;
+}
+CStatisticDlg QTableWidget QHeaderView::section {
+	min-height: 40px;
+	max-height: 40px;
+	background-color: #1c1c1c;
+	color: #9d9d9d;
+	border: 0px solid #242424;
+}
+CStatisticDlg QTableWidget::item {
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 0px solid #242424;
+}
+CStatisticDlg QTableWidget::item::selected {
+	background-color:  #414244;
+	color: #FFFFFF;
+}
+/* 拉流统计信息 End */
+
+/* Settings窗口 Begin */
+CSettingDlg {	
+	min-width: 762px;
+	min-height: 632px;
+	border-radius: 2px;
+	background-color: #292a2b;	
+	border: 1px solid #171717;
+}
+
+CSettingDlg QFrame#frameTabWidget {
+	background: #1c1c1c;
+	border: 0px;
+}
+CSettingDlg QTabWidget::pane {
+    border-top: 0px;
+}
+CSettingDlg QTabBar {
+	background: #1c1c1c;
+	border-bottom: 1px solid #121213;
+}
+QTabWidget::tab-bar {
+    left: 55px;
+}
+CSettingDlg QTabBar::tab {
+	min-width: 80px;
+	min-height: 38px;
+    background: #1c1c1c;
+	color: #9d9d9d;
+	border-bottom: 1px solid #121213;
+    padding-left: 4px;
+	padding-right: 4px;
+	margin-left: 12px;
+	margin-right: 12px;
+}
+CSettingDlg QTabBar::tab:selected, QTabBar::tab:hover {
+	color: #ffffff;
+}
+CSettingDlg QTabBar::tab:selected {
+	border-bottom: 2px solid #ff0000;
+}
+
+CSettingDlg QFrame#line {
+	background-color: rgb(55, 55, 55);
+}
+/* Settings窗口 End */
+
+/* 保存图像设置窗口 Begin */
+CSaveImageDlg {
+	min-width: 762px;
+	min-height: 507px;
+	max-width: 762px;
+	max-height: 507px;
+}
+
+CSaveImageDlg QFrame#frame{
+	background-color: #292a2b;
+}
+
+CSaveImageDlg QFrame#line1,
+CSaveImageDlg QFrame#line2,
+CSaveImageDlg QFrame#line3 {
+	border: 2px dotted rgba(0, 0, 0, 30%);
+}
+
+CSaveImageDlg QPushButton#btnLocation {
+	min-width: 26px;
+	min-height: 26px;
+	max-width: 26px;
+	max-height: 26px;
+	background-color: #292a2b;
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Normal.png");
+}
+CSaveImageDlg QPushButton#btnLocation:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Hover.png");
+}
+CSaveImageDlg QPushButton#btnLocation:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Pressed.png");
+}
+CSaveImageDlg QPushButton#btnLocation:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Disable.png");
+}
+
+CSaveImageDlg QLineEdit#lineEditLocation,
+CSaveImageDlg QLineEdit#lineEditPrefix {
+	padding-left: 8px;
+}
+CSaveImageDlg QLineEdit#lineEditThrottleFlow,
+CSaveImageDlg QLineEdit#lineEditThrottleNum,
+CSaveImageDlg QLineEdit#lineEditThrottleTime  {
+	padding-left: 7px;
+}
+/* 保存图像设置窗口 End */
+
+/* 录像设置窗口 Begin */
+CRecordVideoDlg {
+	min-width: 762px;
+	min-height: 507px;
+	max-width: 762px;
+	max-height: 507px;
+}
+
+CRecordVideoDlg QFrame#frame{
+	background-color: #292a2b;
+}
+
+CRecordVideoDlg QFrame#line1,
+CRecordVideoDlg QFrame#line2,
+CRecordVideoDlg QFrame#line3 {
+	border: 2px dotted rgba(0, 0, 0, 30%);
+}
+
+CRecordVideoDlg QPushButton#btnRecordLocation {
+	min-width: 26px;
+	min-height: 26px;
+	max-width: 26px;
+	max-height: 26px;
+	background-color: #292a2b;
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Normal.png");
+}
+CRecordVideoDlg QPushButton#btnRecordLocation:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Hover.png");
+}
+CRecordVideoDlg QPushButton#btnRecordLocation:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Pressed.png");
+}
+CRecordVideoDlg QPushButton#btnRecordLocation:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Disable.png");
+}
+
+CRecordVideoDlg QLineEdit#recordLocation,
+CRecordVideoDlg QLineEdit#recordPrefix {
+	padding-left: 8px;
+}
+CRecordVideoDlg QLineEdit#customFps {
+	padding-left: 7px;
+}
+/* 录像设置窗口 End */
+
+/* 缓存设置窗口 Begin */
+CBufferOptionsDlg {
+	min-width: 762px;
+	min-height: 505px;
+	max-width: 762px;
+	max-height: 505px;
+}
+
+CBufferOptionsDlg QFrame#frame{
+	background-color: #292a2b;
+}
+
+CBufferOptionsDlg QLabel#labelInfo1,
+CBufferOptionsDlg QLabel#labelInfo2,
+CBufferOptionsDlg QLabel#labelInfo3 {
+	color: #858585;
+}
+
+CBufferOptionsDlg QLineEdit#lineEditBufferCount  {
+	padding-left: 7px;
+}
+/* 缓存设置窗口 End */
+
+/* 通用设置窗口 Begin */
+CGeneralSettingDlg {
+	min-width: 762px;
+	min-height: 505px;
+	max-width: 762px;
+	max-height: 505px;
+}
+
+CGeneralSettingDlg QFrame#frame{
+	background-color: #292a2b;
+}
+
+CGeneralSettingDlg QToolButton#btnRestoreDefaultParam {	
+	min-height: 32px;
+	max-height: 32px;
+	background-color: #4c4d4e;
+	spacing: 8px;
+	color: #e2e2e2;
+	padding-left: 18px;
+	padding-right: 16px;
+}
+CGeneralSettingDlg QToolButton#btnRestoreDefaultParam:hover {	
+	color: #ffffff ;
+	background-color: #545557;
+}
+CGeneralSettingDlg QToolButton#btnRestoreDefaultParam:pressed {	
+	color: #ffffff;
+	background-color: #48494a ;
+}
+/* 通用设置窗口 End */
+
+/* 传输控制窗口 Begin */
+CCommCtrlDlg {
+	min-width: 762px;
+	min-height: 505px;
+	max-width: 762px;
+	max-height: 505px;
+}
+
+CCommCtrlDlg QFrame#frame{
+	background-color: #292a2b;
+}
+
+CCommCtrlDlg QLabel#iconAnswerTimeout,
+CCommCtrlDlg QLabel#iconHeartbeatInterval,
+CCommCtrlDlg QLabel#iconInterPacketTimeout,
+CCommCtrlDlg QLabel#iconSingleResendMaxPackNum,
+CCommCtrlDlg QLabel#iconMaximumLostPacketNum {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Normal.png");	
+}
+CCommCtrlDlg QLabel#iconAnswerTimeout:hover,
+CCommCtrlDlg QLabel#iconHeartbeatInterval:hover,
+CCommCtrlDlg QLabel#iconInterPacketTimeout:hover,
+CCommCtrlDlg QLabel#iconSingleResendMaxPackNum:hover,
+CCommCtrlDlg QLabel#iconMaximumLostPacketNum:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Hover.png");	
+}
+CCommCtrlDlg QLabel#iconAnswerTimeout:pressed,
+CCommCtrlDlg QLabel#iconHeartbeatInterval:pressed,
+CCommCtrlDlg QLabel#iconInterPacketTimeout:pressed,
+CCommCtrlDlg QLabel#iconSingleResendMaxPackNum:pressed,
+CCommCtrlDlg QLabel#iconMaximumLostPacketNum:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Pressed.png");	
+}
+CCommCtrlDlg QLabel#iconAnswerTimeout:disabled,
+CCommCtrlDlg QLabel#iconHeartbeatInterval:disabled,
+CCommCtrlDlg QLabel#iconInterPacketTimeout:disabled,
+CCommCtrlDlg QLabel#iconSingleResendMaxPackNum:disabled,
+CCommCtrlDlg QLabel#iconMaximumLostPacketNum:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Disable.png");	
+}
+
+CCommCtrlDlg QLineEdit#lineEditAnswerTimeout,
+CCommCtrlDlg QLineEdit#lineEditHeartbeatInterval {
+	padding-left: 7px;
+}
+CCommCtrlDlg QLineEdit#lineEditInterPacketTimeout,
+CCommCtrlDlg QLineEdit#lineEditSingleResendMaxPackNum,
+CCommCtrlDlg QLineEdit#lineEditMaximumLostPacketNum {
+	padding-left: 8px;
+}
+/* 传输控制窗口 End */
+
+/* 采集卡配置 Begin */
+CBoardSettingsDlg {
+	min-width: 762px;
+	min-height: 505px;
+	max-width: 762px;
+	max-height: 505px;
+}
+CBoardSettingsDlg QPushButton#btnConfigFile {
+	min-width: 26px;
+	min-height: 26px;
+	max-width: 26px;
+	max-height: 26px;
+	background-color: #292a2b;
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Normal.png");
+}
+CBoardSettingsDlg QPushButton#btnConfigFile:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Hover.png");
+}
+CBoardSettingsDlg QPushButton#btnConfigFile:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Pressed.png");
+}
+CBoardSettingsDlg QPushButton#btnConfigFile:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Common_Folder_Disable.png");
+}
+
+CBoardSettingsDlg QLabel#lbIconIndex,
+CBoardSettingsDlg QLabel#lbIconPort {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Normal.png");	
+}
+CBoardSettingsDlg QLabel#lbIconIndex:hover,
+CBoardSettingsDlg QLabel#lbIconPort:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Hover.png");	
+}
+CBoardSettingsDlg QLabel#lbIconIndex:pressed,
+CBoardSettingsDlg QLabel#lbIconPort:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Pressed.png");	
+}
+CBoardSettingsDlg QLabel#lbIconIndex:disabled,
+CBoardSettingsDlg QLabel#lbIconPort:disabled {
+	border-image: url("Skins/Default/CamClient/Btn_Dialog_Help_Disable.png");	
+}
+/* 采集卡配置 End */
+
+CCommonTitleBar QToolButton {
+	max-height: 24;
+	max-width: 24;
+	min-height: 24;
+	min-width: 24;
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Normal.png");
+}
+CCommonTitleBar QToolButton:hover {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Hover.png");
+}
+CCommonTitleBar QToolButton:pressed {
+	border-image: url("Skins/Default/CamClient/Btn_Common_WinClose_Pressed.png");
+}
+
+CCommonTitleBar QLabel#lbTitle {	
+	font-size: 16px;
+	color: #ffffff;
+	background-color: #2f2f30;
+	min-width: 0px;
+	max-width: 10000px;
+}
+
+CCommonMessageBox {
+	border: 1 solid #171717;
+	min-width: 492;
+	min-height: 382;
+}
+CCommonMessageBox QFrame#mainFrame {
+	min-width: 492;
+	background: #292a2b;
+	margin: 1px;
+}
+CCommonMessageBox QLabel#lbIcon {
+	margin-top: 20px;
+	margin-bottom: 16px;
+	min-width: 280;
+	min-height: 200;
+	max-width: 280;
+	max-height: 200;
+}
+CCommonMessageBox QLabel#lbMsg {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 46px;
+	margin-right: 46px;
+	min-height: 0px;
+	min-width: 0px;
+	max-height:10000px;
+	max-width:10000px;
+}
+
+CCommonMessageBox QTextEdit#textEdit {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 46px;
+    margin-right: 46px;
+    background: transparent;
+    border: 0px;
+    min-height:45;
+    selection-background-color: #797c81;
+    selection-color: #FFFFFF;
+	min-height: 0px;
+	min-width: 0px;
+	max-height:40;
+	max-width:10000px;
+}
+CCommonMessageBox QTextEdit#textEdit:focus {
+	border: 0px;
+}
+CCommonMessageBox QLabel#lbIcon[icon="0"] {
+	image: url(Skins/Default/CamClient/Icon_Dialog_TipsInfo.png);
+}
+CCommonMessageBox QLabel#lbIcon[icon="1"] {
+	image: url(Skins/Default/CamClient/Icon_Dialog_TipsInfo.png);
+}
+CCommonMessageBox QLabel#lbIcon[icon="2"] {
+	image: url(Skins/Default/CamClient/Icon_Dialog_TipsWarning.png);
+}
+CCommonMessageBox QLabel#lbIcon[icon="3"] {
+	image: url(Skins/Default/CamClient/Icon_Dialog_TipsError.png);
+}
+CCommonMessageBox QLabel#lbIcon[icon="4"] {
+	image: url(Skins/Default/CamClient/Icon_Dialog_TipsConfirm.png);
+}
+
+CCommonMessageBox QFrame#line {
+	background-color: #404141;
+	max-height: 1;
+	min-height: 1;
+	min-width: 492px;
+	border: 0px;
+	margin-bottom: 9px;
+	margin-top: 32px;
+}
+CCommonMessageBox QFrame#line_2 {
+	background-color: #121213;
+	max-height: 1;
+	min-height: 1;
+	border: 0px;
+}
+
+CCommonMessageBox QPushButton{
+	min-height: 30px;
+	min-width: 80px;
+	color: #979797;
+	background-color: #292a2b;
+	border: 1px solid #555555;
+}
+CCommonMessageBox QPushButton:hover{
+	color: #ffffff ;
+	background-color: #545557;
+	border: 1px solid #555555;
+}
+CCommonMessageBox QPushButton:pressed{
+	color: #ffffff;
+	background-color: #48494a ;  
+	border: 1px solid #555555;
+}
+CCommonMessageBox QPushButton:disabled{
+	color: #515253;
+	background-color: #292a2b;
+	border: 1px solid #48494a;
+}
+CCommonMessageBox QPushButton:default{
+	background: #4c4d4e;
+	color: #e2e2e2;
+}
+CCommonMessageBox QPushButton:default:hover{
+	background: #545557;
+	color: #ffffff;
+}
+CCommonMessageBox QPushButton:default:pressed{
+	background: #48494a;
+	color: #ffffff;
+}
+CCommonMessageBox QPushButton:default:disabled{
+	background: #48494a;
+	color: #7a7d7f;
+}
+
+
+
+QSizeGrip {
+    /*image: url(Skins/Default/CamClient/Btn_Common_Folder_Pressed.png);
+    width: 14px;
+    height: 14px;*/
+}
+
+/* 设置LogIn界面 Begin */
+CLogInDlg {	
+	min-width: 324px;
+	min-height: 170px;
+	max-width: 324px;
+	max-height: 170px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+
+CLogInDlg QLabel {	
+	font-size: 12px;
+	color: #9d9d9d;
+}
+
+CLogInDlg QLabel#lbIconBrown,
+CLogInDlg QLabel#lbIconBlue {
+	background-color: #ff2d2d;
+}
+
+CLogInDlg QLineEdit {
+	padding-left: 16px;
+}
+
+CLogInDlg QFrame#line_2 {
+	border: 2px dotted rgba(0, 0, 0, 30%);
+}
+CLogInDlg QFrame#line_3 {
+	background-color: rgb(55, 55, 55);
+}
+/* 设置LogIn界面 End */
+
+/* 设置CAccountManagementDlg界面 Begin */
+CAccountManagementDlg {	
+	min-width: 324px;
+	min-height: 230px;
+	max-width: 324px;
+	max-height: 230px;
+	border-radius: 2px;
+	border: 1px solid #171717;
+}
+
+CAccountManagementDlg QLabel {	
+	font-size: 12px;
+	color: #9d9d9d;
+}
+
+CAccountManagementDlg QLabel#lbIconBrown,
+CAccountManagementDlg QLabel#lbIconBlue {
+	background-color: #ff2d2d;
+}
+
+CAccountManagementDlg QLineEdit {
+	padding-left: 16px;
+}
+
+CAccountManagementDlg QFrame#line_2 {
+	border: 2px dotted rgba(0, 0, 0, 30%);
+}
+CAccountManagementDlg QFrame#line_3 {
+	background-color: rgb(55, 55, 55);
+}
+/* 设置CAccountManagementDlg界面 End */
