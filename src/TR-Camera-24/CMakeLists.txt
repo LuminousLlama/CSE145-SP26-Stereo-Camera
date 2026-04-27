@@ -31,11 +31,19 @@ target_link_libraries(camera_node ${OpenCV_LIBS})
 #huaray
 set(HUARAY_LIB_DIR /opt/HuarayTech/MVviewer/lib)
 
+# GenICam libs are in an arch-specific subdirectory on x86_64
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(GENICAM_LIB_DIR ${HUARAY_LIB_DIR}/GenICam/bin/Linux64_x64)
+else()
+  set(GENICAM_LIB_DIR ${HUARAY_LIB_DIR}/GenICam/bin)
+endif()
+
 find_library(CAMERA_LIB
   NAMES MVSDK
   HINTS ${HUARAY_LIB_DIR}
   REQUIRED
 )
+target_link_directories(camera_node PUBLIC ${GENICAM_LIB_DIR})
 target_link_libraries(camera_node ${CAMERA_LIB})
 
 # our stuff

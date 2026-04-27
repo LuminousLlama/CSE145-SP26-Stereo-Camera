@@ -6,7 +6,9 @@ ARG TARGETARCH
 
 WORKDIR /ros2_ws
 COPY vendor/HuarayTech-${TARGETARCH} /opt/HuarayTech
-RUN printf "/opt/HuarayTech/MVviewer/lib\n/opt/HuarayTech/MVviewer/lib/GenICam/bin\n" > /etc/ld.so.conf.d/huaray.conf && ldconfig
+RUN GENICAM_BIN=/opt/HuarayTech/MVviewer/lib/GenICam/bin; \
+    [ "$TARGETARCH" = "amd64" ] && GENICAM_BIN="${GENICAM_BIN}/Linux64_x64"; \
+    printf "/opt/HuarayTech/MVviewer/lib\n${GENICAM_BIN}\n" > /etc/ld.so.conf.d/huaray.conf && ldconfig
 
 
 FROM base AS builder
