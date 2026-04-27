@@ -1,0 +1,59 @@
+{
+  "name": "ROS 2 Jazzy – Stereo Camera",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "target": "dev"
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/ros2_ws,type=bind,consistency=cached",
+  "workspaceFolder": "/ros2_ws",
+  "remoteUser": "root",
+  "runArgs": [
+    "--network=host",
+    "--ipc=host",
+    "--device-cgroup-rule=c 189:* rwm",
+    "-v", "/dev/bus/usb:/dev/bus/usb",
+    "-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
+    "-v", "${localEnv:HOME}/.Xauthority:/root/.Xauthority:rw",
+    "-e", "DISPLAY=${localEnv:DISPLAY}"
+  ],
+  "postCreateCommand": "rosdep install --from-paths /ros2_ws/src --ignore-src -y",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "ms-iot.vscode-ros",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.cpptools-extension-pack",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "ROS2.distro": "jazzy",
+        "ros.distro": "jazzy",
+        "python.autoComplete.extraPaths": [
+          "/opt/ros/jazzy/lib/python3.12/site-packages",
+          "/opt/ros/jazzy/local/lib/python3.12/dist-packages"
+        ],
+        "python.analysis.extraPaths": [
+          "/opt/ros/jazzy/lib/python3.12/site-packages",
+          "/opt/ros/jazzy/local/lib/python3.12/dist-packages"
+        ],
+        "C_Cpp.default.includePath": [
+          "/opt/ros/jazzy/include/**",
+          "/opt/HuarayTech/MVviewer/include/**",
+          "/usr/include/**",
+          "${workspaceFolder}/src/**"
+        ],
+        "C_Cpp.default.compilerPath": "/usr/bin/g++",
+        "C_Cpp.default.cStandard": "gnu11",
+        "C_Cpp.default.cppStandard": "c++17",
+        "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cSpell.words": ["HUARAY", "colcon", "rclcpp", "rosdep", "ament"]
+      }
+    }
+  }
+}

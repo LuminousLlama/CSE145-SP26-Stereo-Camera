@@ -6,6 +6,12 @@
 sudo apt install git-lfs 
 git lfs install 
 
+
+
+xhost +local:docker
+
+ctrl + shift + p `Dev Containers: Reopen in Container`
+
 ## Docker setup 
 
 1. install docker 

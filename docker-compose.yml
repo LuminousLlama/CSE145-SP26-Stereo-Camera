@@ -1,10 +1,9 @@
-services: 
-  ros2_app: 
-    image: stereo:test
-    # command: 
+services:
+  ros2_app:
+    image: luminousllama/stereo-camera:latest
     device_cgroup_rules:
       - 'c 189:* rwm'
     volumes:
       - /dev/bus/usb:/dev/bus/usb
     ipc: host
-    network_mode: host  
+    network_mode: host
