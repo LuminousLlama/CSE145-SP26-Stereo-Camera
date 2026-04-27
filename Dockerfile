@@ -18,7 +18,11 @@ RUN GENICAM_BIN=/opt/HuarayTech/MVviewer/lib/GenICam/bin; \
 
 # Dev used by vscode dev containers. Empty because code is mounted at runtime 
 FROM base AS dev
-# RUN apt-get update && apt-get install -y xauth && rm -rf /var/lib/apt/lists/*
+# add git lfs to dev to be able to push
+RUN apt-get update \ 
+    && apt-get install -y --no-install-recommends git-lfs \ 
+    && git lfs install \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # Prod used for docker pull and run on the PI directly
