@@ -11,9 +11,10 @@ RUN printf "/opt/HuarayTech/MVviewer/lib\n/opt/HuarayTech/MVviewer/lib/GenICam/b
 
 FROM base AS builder
 RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/10no-check-valid-until \
-    && apt-get update && rosdep install --from-paths src --ignore-src -y && rm -rf /var/lib/apt/lists/*
+    && apt-get update && rm -rf /var/lib/apt/lists/*
 
 COPY src/ src/
+RUN rosdep install --from-paths src --ignore-src -y
 RUN . /opt/ros/jazzy/setup.sh && colcon build
 
 
