@@ -6,10 +6,10 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/ros2_ws,type=bind,consistency=cached",
   "mounts": [
-    "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,readonly"
+    "source=${localEnv:HOME}/.gitconfig,target=/home/ubuntu/.gitconfig,type=bind,readonly"
   ],
   "workspaceFolder": "/ros2_ws",
-  "remoteUser": "root",
+  "remoteUser": "ubuntu",
   "runArgs": [
     "--network=host",
     "--ipc=host",
@@ -19,7 +19,7 @@
     "-v", "${localEnv:HOME}/.Xauthority:/root/.Xauthority:rw",
     "-e", "DISPLAY=${localEnv:DISPLAY}"
   ],
-  "postCreateCommand": "rosdep install --from-paths /ros2_ws/src --ignore-src -y && git config --local commit.gpgsign false",
+  "postCreateCommand": "sudo rosdep init || true && rosdep update && rosdep install --from-paths /ros2_ws/src --ignore-src -y && git config --local commit.gpgsign false",
 
   "customizations": {
     "vscode": {

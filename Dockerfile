@@ -16,13 +16,20 @@ RUN GENICAM_BIN=/opt/HuarayTech/MVviewer/lib/GenICam/bin; \
     printf "/opt/HuarayTech/MVviewer/lib\n${GENICAM_BIN}\n" > /etc/ld.so.conf.d/huaray.conf && ldconfig
 
 
-# Dev used by vscode dev containers. Empty because code is mounted at runtime 
+# Dev used by vscode dev containers. Empty because code is mounted at runtime
 FROM base AS dev
 # add git lfs to dev to be able to push
-RUN apt-get update \ 
-    && apt-get install -y --no-install-recommends git-lfs \ 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git-lfs \
     && git lfs install \
     && rm -rf /var/lib/apt/lists/*
+
+# The Ubuntu Noble base image already has an `ubuntu` user at UID/GID 1000.
+# Give it passwordless sudo and own the workspace so bind-mounted files
+# are owned by the host user (also UID 1000).
+RUN usermod -aG sudo ubuntu \
+    && echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ubuntu
+RUN chown -R ubuntu:ubuntu /ros2_ws
 
 
 # Prod used for docker pull and run on the PI directly
