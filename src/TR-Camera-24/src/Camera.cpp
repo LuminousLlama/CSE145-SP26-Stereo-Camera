@@ -45,7 +45,47 @@ Camera::Camera() {
     }
 }
 
-int Camera::init(double exposure) {
+Camera::Camera(std::string serialNumber) {
+    this->status = IMV_OK;
+    IMV_HANDLE temp_devHandle = NULL;
+    try {
+        IMV_DeviceList deviceInfoList;
+        this->status = IMV_EnumDevices(&deviceInfoList, interfaceTypeAll);
+        if (IMV_OK != this->status) {
+            printf("Enumeration devices failed! ErrorCode[%d]\n", this->status);
+            getchar();
+            return;
+        }
+
+        if (deviceInfoList.nDevNum < 1) {
+            printf("no camera\n");
+            return;
+        }
+        displayDeviceInfo(deviceInfoList);
+
+        unsigned int cameraIndex = deviceInfoList.nDevNum; // sentinel: not found
+        for (unsigned int i = 0; i < deviceInfoList.nDevNum; i++) {
+            if (strstr(deviceInfoList.pDevInfo[i].serialNumber, serialNumber.c_str()) != nullptr) {
+                cameraIndex = i;
+                break;
+            }
+        }
+        if (cameraIndex == deviceInfoList.nDevNum) {
+            printf("No HuaRay camera found in device list\n");
+            return;
+        }
+
+        this->status = IMV_CreateHandle(&temp_devHandle, modeByIndex, (void *) &cameraIndex);
+        if (IMV_OK != this->status) {
+            throw "Create devHandle failed";
+        }
+        this->devHandle = temp_devHandle;
+    } catch (const char *exp) {
+        printf("Create devHandle failed! ErrorCode[%d]\n", this->status);
+    }
+}
+
+int Camera::init(double exposure, bool trigger) {
     // open camera
     this->status = IMV_Open(this->devHandle);
 
@@ -68,6 +108,16 @@ int Camera::init(double exposure) {
     // Set feature value
 
     this->status = setProperty(exposure, 1280, 1024);
+
+    // Set hardware trigger
+
+    if (trigger) {
+        this->status = setTrigger();
+        if (IMV_OK != this->status) {
+            printf("Hardware Trigger Failed! ErrorCode[%d]\n", this->status);
+            return this->status;
+        }
+    }
 
     // start grabbing
     this->status = IMV_StartGrabbing(this->devHandle);
@@ -145,6 +195,19 @@ int Camera::setExposure(double exposureTime){
     this->status = IMV_SetDoubleFeatureValue(this->devHandle, "ExposureTime", exposureTime);
     if (IMV_OK != this->status) {
         printf("Set ExposureTime value failed! ErrorCode[%d]\n", this->status);
+        return this->status;
+    }
+    return IMV_OK;
+}
+
+int Camera::setTrigger() {
+    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerSelector", 1); // FrameStart
+    this->status = IMV_SetBoolFeatureValue(this->devHandle, "TriggerMode", true); // On
+    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerSource", 1); // Line 1
+    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerActivation", 0); // RisingEdge
+    
+    if (IMV_OK != this->status) {
+        printf("Set Hardware Trigger failed! ErrorCode[%d]\n", this->status);
         return this->status;
     }
     return IMV_OK;

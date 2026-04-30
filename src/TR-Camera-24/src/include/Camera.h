@@ -10,19 +10,24 @@
 #include <exception>
 
 #include <opencv2/opencv.hpp>
+#include <string>
 
 class Camera {
 public:
     Camera();
 
+    Camera(std::string serialNumber);
+
     ~Camera();
 
-    int init(double exposure);
+    int init(double exposure, bool trigger);
 
     int getImage(cv::Mat &img);
 
     void cameraStatistic();
     int setExposure(double exposureTime);
+
+    int setTrigger();
 
 private:
     int setProperty(double exposureTime, int width, int height);
