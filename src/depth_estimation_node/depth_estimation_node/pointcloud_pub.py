@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2, PointField
+from sensor_msgs.msg import PointCloud2, PointField, Image
+from message_filters import ApproximateTimeSynchronizer, Subscriber
 import struct
 import numpy as np
 import cv2
@@ -125,6 +125,7 @@ class PointCloudPublisher(Node):
 
 def main():
     rclpy.init()
+    print("hi!")
     node = PointCloudPublisher()
     rclpy.spin(node)
     rclpy.shutdown()
