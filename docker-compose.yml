@@ -5,5 +5,7 @@ services:
       - 'c 189:* rwm'
     volumes:
       - /dev/bus/usb:/dev/bus/usb
+      - ./src/depth_estimation_node:/ros2_ws/src/depth_estimation_node
+      - ./images:/ros2_ws/src/images
     ipc: host
     network_mode: host

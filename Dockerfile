@@ -36,7 +36,11 @@ RUN chown -R ubuntu:ubuntu /ros2_ws
 FROM base AS prod
 COPY src/ src/
 RUN apt-get update \
-    && rosdep install --from-paths src --ignore-src -y \
+    && rosdep install --from-paths src --ignore-src -r -y \
+    --skip-keys="ament_python" \
     && rm -rf /var/lib/apt/lists/*
 RUN . /opt/ros/jazzy/setup.sh && colcon build
 CMD ["bash"]
+
+# Python dependencies
+RUN apt-get update && apt-get install -y python3-matplotlib
