@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2, PointField
+from sensor_msgs.msg import PointCloud2, PointField, Image
+from message_filters import ApproximateTimeSynchronizer, Subscriber
 import struct
 import numpy as np
 import cv2
-
+import cv_bridge
 from .stereo import gen_pointcloud_from_params
-
-#load a pair of images 
-img1 = cv2.imread('../images/left.png')
-img2 = cv2.imread('../images/right.png')
 
 camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
                             [0.00000, 623.53830, 360.00000], 
@@ -30,22 +26,29 @@ class PointCloudPublisher(Node):
     def __init__(self):
         super().__init__('pc_publisher')
         self.pub = self.create_publisher(PointCloud2, 'points', 10)
-        self.timer = self.create_timer(1.0, self.publish_points)
+        self.bridge = cv_bridge.CvBridge()
 
-    def publish_points(self):
+        subL = Subscriber(self, Image, 'camera/imageL')
+        subR = Subscriber(self, Image, 'camera/imageR')
+
+        self.sync = ApproximateTimeSynchronizer(
+            [subL, subR],
+            queue_size=10,
+            slop=0.01  # 10ms tolerance
+        )
+        self.sync.registerCallback(self.synced_callback)
+
+    def synced_callback(self, msgL, msgR):
+        imgL = self.bridge.imgmsg_to_cv2(msgL, desired_encoding='bgr8')
+        imgR = self.bridge.imgmsg_to_cv2(msgR, desired_encoding='bgr8')
+
+        points = gen_pointcloud_from_params(
+            imgL, imgR, camera_matrix, dist_coeffs, cam1_ext, cam2_ext
+        )
+
         msg = PointCloud2()
         msg.header.frame_id = "map"
-
-        # Example data
-        # points = [
-        #     (1.0, 0.0, 0.0, 255, 0, 0),
-        #     (0.0, 1.0, 0.0, 0, 255, 0),
-        #     (0.0, 0.0, 1.0, 0, 0, 255),
-        # ]
-
-        # Real data
-        points = gen_pointcloud_from_params(img1, img2, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
-
+        msg.header.stamp = msgL.header.stamp  # use camera timestamp, not receive time
         msg.height = 1
         msg.width = len(points)
 
@@ -74,6 +77,7 @@ class PointCloudPublisher(Node):
 
 def main():
     rclpy.init()
+    print("hi!")
     node = PointCloudPublisher()
     rclpy.spin(node)
     rclpy.shutdown()

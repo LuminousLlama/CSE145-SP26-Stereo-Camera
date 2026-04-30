@@ -6,8 +6,8 @@ import cv2
 # print(os.getcwd())
 
 #load a pair of images
-img1 = cv2.imread('../images/left.png')
-img2 = cv2.imread('../images/right.png')
+# img1 = cv2.imread('../images/left.png')
+# img2 = cv2.imread('../images/right.png')
 
 camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
                             [0.00000, 623.53830, 360.00000], 
