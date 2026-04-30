@@ -11,24 +11,51 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
+  
   rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("image_publisher", options);
   image_transport::ImageTransport it(node);
-  image_transport::Publisher pub = it.advertise("camera/image", 1);
+  image_transport::Publisher pubL = it.advertise("camera/imageL", 1);
+  image_transport::Publisher pubR = it.advertise("camera/imageR", 1);
 
-  Camera camera {};
-  camera.init(4000); //RMNA 2024 conditions
+  Camera cameraL("ABCD");
+  Camera cameraR("1234");
 
-  rclcpp::WallRate loop_rate(200);
+  cameraL.init(16000, true);
+  cameraR.init(16000, true);
+  
+  rclcpp::WallRate loop_rate(100);
   while (rclcpp::ok()) {
-    cv::Mat image = {};
-    int status = camera.getImage(image);
-    if (status != 0) {
-      continue;
+    cv::Mat imageL, imageR;
+    int statusL = 0, statusR = 0;
+
+    // Grab both cameras in parallel
+    std::thread grabL([&]() {
+        statusL = cameraL.getImage(imageL);
+    });
+    std::thread grabR([&]() {
+        statusR = cameraR.getImage(imageR);
+    });
+
+    grabL.join();  // wait for both to finish
+    grabR.join();
+
+    if (statusL != 0 || statusR != 0) {
+        continue;  // skip if either failed
     }
-    std_msgs::msg::Header hdr;
-    sensor_msgs::msg::Image::SharedPtr msg = cv_bridge::CvImage(hdr, "bgr8", image).toImageMsg();
-    msg->header.stamp = node->now();
-    pub.publish(msg);
+
+    // Publish with same timestamp for sync
+    auto stamp = node->now();
+
+    std_msgs::msg::Header hdrL;
+    auto msgL = cv_bridge::CvImage(hdrL, "bgr8", imageL).toImageMsg();
+    msgL->header.stamp = stamp;
+    pubL.publish(msgL);
+
+    std_msgs::msg::Header hdrR;
+    auto msgR = cv_bridge::CvImage(hdrR, "bgr8", imageR).toImageMsg();
+    msgR->header.stamp = stamp;
+    pubR.publish(msgR);
+
     rclcpp::spin_some(node);
     loop_rate.sleep();
   }
