@@ -17,11 +17,11 @@ int main(int argc, char ** argv)
   image_transport::Publisher pubL = it.advertise("camera/imageL", 1);
   image_transport::Publisher pubR = it.advertise("camera/imageR", 1);
 
-  Camera cameraL("ABCD");
-  Camera cameraR("1234");
+  Camera cameraL("BC24484AAK00010");
+  Camera cameraR("BC24484AAK00009");
 
-  cameraL.init(16000, true);
-  cameraR.init(16000, true);
+  cameraL.init(16000, false);
+  cameraR.init(16000, false);
   
   rclcpp::WallRate loop_rate(100);
   while (rclcpp::ok()) {
