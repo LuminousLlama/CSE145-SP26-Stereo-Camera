@@ -1,3 +1,0 @@
-[console_scripts]
-pointcloud_pub = pointcloud_pub.pointcloud_pub:main
-

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import time
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2, PointField
