@@ -6,12 +6,22 @@ from sensor_msgs.msg import PointCloud2, PointField
 import struct
 import numpy as np
 import cv2
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
 
 from .stereo import gen_pointcloud_from_params, rectification_map
 
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
+
+qos = QoSProfile(
+    reliability=ReliabilityPolicy.BEST_EFFORT,
+    history=HistoryPolicy.KEEP_LAST,
+    depth=10
+)
+
 #load a pair of images 
-img1 = cv2.imread('../images/left.png')
-img2 = cv2.imread('../images/right.png')
+#img1 = cv2.imread('../images/left.png')
+#img2 = cv2.imread('../images/right.png')
 
 camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
                             [0.00000, 623.53830, 360.00000], 
@@ -32,17 +42,48 @@ class PointCloudPublisher(Node):
         self.pub = self.create_publisher(PointCloud2, 'points', 10)
         self.timer = self.create_timer(0.0, self.publish_points)
         self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = None, None, None, None, None, None, None
+        self.rectflag = False
 
-        try:
-            if camera_matrix is not None and cam1_ext is not None and cam2_ext is not None:
-                self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(img1, img2, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
-            else:
-                print('camera_matrix, dist_coeffs, cam1_ext and cam2_ext are not all set; skipping rectification')
-        except Exception as e:
-            print('Rectification failed:', e)
+        self.bridge = CvBridge()
 
+        self.imgL = None
+        self.imgR = None
+
+        self.subL = self.create_subscription(
+            Image,
+            '/camera/imageL',
+            self.left_callback,
+            qos
+        )
+
+        self.subR = self.create_subscription(
+            Image,
+            '/camera/imageR',
+            self.right_callback,
+            qos
+        )
+
+        
+
+    def left_callback(self, msg):
+        self.imgL = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+
+    def right_callback(self, msg):
+        self.imgR = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
     def publish_points(self):
+        if self.imgL is None or self.imgR is None:
+            return 
+        elif not self.rectflag:
+            try:
+                if camera_matrix is not None and cam1_ext is not None and cam2_ext is not None:
+                    self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(self.imgL, self.imgR, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
+                    self.rectflag = True
+                else:
+                    print('camera_matrix, dist_coeffs, cam1_ext and cam2_ext are not all set; skipping rectification')
+            except Exception as e:
+                print('Rectification failed:', e)
+
         msg = PointCloud2()
         msg.header.frame_id = "map"
 
@@ -54,7 +95,7 @@ class PointCloudPublisher(Node):
         # ]
 
         # Real data
-        points = gen_pointcloud_from_params(img1, img2, self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2)
+        points = gen_pointcloud_from_params(self.imgL, self.imgR, self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2)
 
         msg.height = 1
         msg.width = len(points)
