@@ -5,8 +5,8 @@ import gpiod
 import time
 import threading
 
-CHIP = "gpiochip0"
-GPIO_PIN = 7          # Rubik Pi 40-pin header GPIO7
+CHIP = "gpiochip4"
+GPIO_PIN = 8          # Rubik Pi 40-pin header GPIO7
 PULSE_US = 50         # 50 microsecond pulse (match Arduino)
 INTERVAL_S = 0.01     # 10ms = 100Hz
 
