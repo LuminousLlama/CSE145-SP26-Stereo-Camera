@@ -12,23 +12,23 @@ INTERVAL_S = 0.01     # 10ms = 100Hz
 
 class TriggerNode(Node):
     def __init__(self):
-    super().__init__('trigger_node')
-    try:
-        self.chip = gpiod.Chip(CHIP)
-        self.line = self.chip.get_line(GPIO_PIN)
-        self.line.request(
-            consumer="trigger_node",
-            type=gpiod.LINE_REQ_DIR_OUT,
-            default_val=0
-        )
-    except Exception as e:
-        print(f"GPIO error: {e}")
-        raise
+        super().__init__('trigger_node')
+        try:
+            self.chip = gpiod.Chip(CHIP)
+            self.line = self.chip.get_line(GPIO_PIN)
+            self.line.request(
+                consumer="trigger_node",
+                type=gpiod.LINE_REQ_DIR_OUT,
+                default_val=0
+            )
+        except Exception as e:
+            print(f"GPIO error: {e}")
+            raise
 
-    self.running = True
-    self.thread = threading.Thread(target=self.trigger_loop, daemon=True)
-    self.thread.start()
-    self.get_logger().info(f"Trigger node started on {CHIP} pin {GPIO_PIN} at 100Hz")
+        self.running = True
+        self.thread = threading.Thread(target=self.trigger_loop, daemon=True)
+        self.thread.start()
+        self.get_logger().info(f"Trigger node started on {CHIP} pin {GPIO_PIN} at 100Hz")
 
     def trigger_loop(self):
         while self.running:
