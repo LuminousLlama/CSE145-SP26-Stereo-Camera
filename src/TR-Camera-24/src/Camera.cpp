@@ -117,6 +117,9 @@ int Camera::init(double exposure, bool trigger) {
             printf("Hardware Trigger Failed! ErrorCode[%d]\n", this->status);
             return this->status;
         }
+        else {
+            printf("pogchamps\n");
+        }
     }
 
     // start grabbing
@@ -201,15 +204,26 @@ int Camera::setExposure(double exposureTime){
 }
 
 int Camera::setTrigger() {
-    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerSelector", 1); // FrameStart
-    this->status = IMV_SetBoolFeatureValue(this->devHandle, "TriggerMode", true); // On
-    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerSource", 1); // Line 1
-    this->status = IMV_SetIntFeatureValue(this->devHandle, "TriggerActivation", 0); // RisingEdge
-    
+    this->status = IMV_SetEnumFeatureValue(this->devHandle, "TriggerSelector", 1); // FrameStart
     if (IMV_OK != this->status) {
         printf("Set Hardware Trigger failed! ErrorCode[%d]\n", this->status);
         return this->status;
     }
+    this->status = IMV_SetEnumFeatureValue(this->devHandle, "TriggerMode", true); // On
+    if (IMV_OK != this->status) {
+        printf("Set Trigger Mode failed! ErrorCode[%d]\n", this->status);
+        return this->status;
+    }
+    this->status = IMV_SetEnumFeatureValue(this->devHandle, "TriggerSource", 1); // Line 1
+    if (IMV_OK != this->status) {
+        printf("Set Trigger source failed! ErrorCode[%d]\n", this->status);
+        return this->status;
+    }
+    // this->status = IMV_SetEnumFeatureValue(this->devHandle, "TriggerActivation", 0); // RisingEdge
+    // if (IMV_OK != this->status) {
+    //     printf("Set Trigger Activation failed! ErrorCode[%d]\n", this->status);
+    //     return this->status;
+    // }
     return IMV_OK;
 }
 

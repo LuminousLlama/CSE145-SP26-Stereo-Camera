@@ -51,6 +51,14 @@ target_link_libraries(camera_node ${CAMERA_LIB})
 install(TARGETS camera_node
   DESTINATION lib/${PROJECT_NAME})
 
+# Make trigger_node.py executable as a ROS2 node
+find_package(ament_cmake_python REQUIRED)
+install(PROGRAMS
+  src/trigger_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME trigger_node
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
