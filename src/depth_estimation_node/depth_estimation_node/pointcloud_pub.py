@@ -73,16 +73,16 @@ class PointCloudPublisher(Node):
 
     def publish_points(self):
         if self.imgL is None or self.imgR is None:
-            return 
-        elif not self.rectflag:
+            return
+        if not self.rectflag:
             try:
-                if camera_matrix is not None and cam1_ext is not None and cam2_ext is not None:
-                    self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(self.imgL, self.imgR, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
-                    self.rectflag = True
-                else:
-                    print('camera_matrix, dist_coeffs, cam1_ext and cam2_ext are not all set; skipping rectification')
+                self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(self.imgL, self.imgR, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
+                self.rectflag = True
             except Exception as e:
                 print('Rectification failed:', e)
+                return
+        if self.map1_x is None:
+            return
 
         msg = PointCloud2()
         msg.header.frame_id = "map"
