@@ -3,9 +3,10 @@ ARG TARGETARCH
 WORKDIR /ros2_ws
 
 # install rviz2 and rqt
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-jazzy-rviz2 \
-    ros-jazzy-rqt \ 
+    ros-jazzy-rqt \
+    python3-matplotlib \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -41,6 +42,3 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 RUN . /opt/ros/jazzy/setup.sh && colcon build
 CMD ["bash"]
-
-# Python dependencies
-RUN apt-get update && apt-get install -y python3-matplotlib
