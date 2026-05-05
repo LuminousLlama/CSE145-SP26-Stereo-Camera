@@ -14,12 +14,10 @@ class TriggerNode(Node):
     def __init__(self):
         super().__init__('trigger_node')
         try:
-            self.chip = gpiod.Chip(CHIP)
-            self.line = self.chip.get_line(GPIO_PIN)
-            self.line.request(
+            self.line = gpiod.request_lines(
+                CHIP,
                 consumer="trigger_node",
-                type=gpiod.LINE_REQ_DIR_OUT,
-                default_val=0
+                config={GPIO_PIN: gpiod.LineSettings(direction=gpiod.line.Direction.OUTPUT)}
             )
         except Exception as e:
             print(f"GPIO error: {e}")
@@ -33,13 +31,9 @@ class TriggerNode(Node):
     def trigger_loop(self):
         while self.running:
             loop_start = time.monotonic()
-
-            # Pulse HIGH for 50µs
-            self.line.set_value(1)
+            self.line.set_value(GPIO_PIN, gpiod.line.Value.ACTIVE)
             time.sleep(PULSE_US / 1_000_000)
-            self.line.set_value(0)
-
-            # Sleep for remainder of 10ms interval
+            self.line.set_value(GPIO_PIN, gpiod.line.Value.INACTIVE)
             elapsed = time.monotonic() - loop_start
             remaining = INTERVAL_S - elapsed
             if remaining > 0:
@@ -48,9 +42,8 @@ class TriggerNode(Node):
     def destroy_node(self):
         self.running = False
         self.thread.join()
-        self.line.set_value(0)
+        self.line.set_value(GPIO_PIN, gpiod.line.Value.INACTIVE)
         self.line.release()
-        self.chip.close()
         super().destroy_node()
 
 def main():
