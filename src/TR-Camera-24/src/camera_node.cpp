@@ -16,8 +16,8 @@ int main(int argc, char ** argv)
   // Declare parameters with defaults
   node->declare_parameter("exposure_time", 16000.0);
   node->declare_parameter("trigger_mode", false);
-  node->declare_parameter("serial_l", std::string("BC24484AAK00010"));
-  node->declare_parameter("serial_r", std::string("BC24484AAK00009"));
+  node->declare_parameter("serial_l", std::string("BC24484AAK00009"));
+  node->declare_parameter("serial_r", std::string("BC24484AAK00010"));
 
   // Get parameter values
   double exposure_time = node->get_parameter("exposure_time").as_double();

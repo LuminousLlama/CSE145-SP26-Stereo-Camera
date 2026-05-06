@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-jazzy-rviz2 \
     ros-jazzy-rqt \
     python3-matplotlib \
+    # image plot and other plugins for rqt
+    ros-jazzy-rqt* \  
     && rm -rf /var/lib/apt/lists/*
 
 
