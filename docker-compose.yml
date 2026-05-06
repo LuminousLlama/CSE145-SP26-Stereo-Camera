@@ -8,6 +8,7 @@ services:
       - LIBGL_ALWAYS_SOFTWARE=1
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - /run/user/1001:/run/user/1001
       - /dev/bus/usb:/dev/bus/usb
       - /dev/:/dev/
       - ./src/depth_estimation_node:/ros2_ws/src/depth_estimation_node

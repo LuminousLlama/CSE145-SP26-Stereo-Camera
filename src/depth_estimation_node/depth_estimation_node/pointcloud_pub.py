@@ -9,7 +9,7 @@ import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
-from .stereo import gen_pointcloud_from_params, rectification_map
+from .stereo import gen_pointcloud_from_disparity, gen_pointcloud_from_params, rectification_map
 
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 
@@ -33,13 +33,22 @@ camera_matrix_R = np.array([[2.07018872e+03, 0.00000000e+00, 6.34785055e+02],
                              [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 dist_coeffs_R = np.array([-0.09998571, 0.57469675, -0.00285518, -0.00264086, -1.54810632])
 
+# cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
+#                      [0.00000, -1.00000, 0.00000, 1.00000],
+#                      [0.00000, 0.00000, -1.00000, -10.00000],
+#                      [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 1
+# cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578],
+#                      [0.00000, -1.00000, 0.00000, 1.00000],
+#                      [0.10530, 0.00000, -0.99444, -9.99706],
+#                      [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 2
+
 cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
-                     [0.00000, -1.00000, 0.00000, 1.00000],
-                     [0.00000, 0.00000, -1.00000, -10.00000],
+                     [0.00000, 1.00000, 0.00000, 0.00000],
+                     [0.00000, 0.00000, -1.00000, 0.00000],
                      [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 1
-cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578],
-                     [0.00000, -1.00000, 0.00000, 1.00000],
-                     [0.10530, 0.00000, -0.99444, -9.99706],
+cam2_ext = np.array([[1.00000, 0.00000, 0.00000, 180.00000],
+                     [0.00000, 1.00000, 0.00000, 0.00000],
+                     [0.00000, 0.00000, -1.00000, 0.00000],
                      [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 2
 
 class PointCloudPublisher(Node):
@@ -101,7 +110,8 @@ class PointCloudPublisher(Node):
         # ]
 
         # Real data
-        points = gen_pointcloud_from_params(self.imgL, self.imgR, self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2)
+        points = gen_pointcloud_from_disparity(self.imgL, self.imgR, self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.Q)
+        #points = gen_pointcloud_from_params(self.imgL, self.imgR, self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2)
 
         msg.height = 1
         msg.width = len(points)

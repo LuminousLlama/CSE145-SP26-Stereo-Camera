@@ -11,19 +11,20 @@ import random
 #load a pair of images
 # img1 = cv2.imread('../images/left.png')
 # img2 = cv2.imread('../images/right.png')
+vflag = False
 
-camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
-                            [0.00000, 623.53830, 360.00000], 
-                            [0.00000, 0.00000, 1.00000]])
-cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000], 
-					 [0.00000,	-1.00000,	0.00000,	1.00000],
-					 [0.00000,	0.00000,	-1.00000,	-10.00000],
-					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 1
-cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578], 
-					 [0.00000,	-1.00000,	0.00000,	1.00000], 
-					 [0.10530,	0.00000,	-0.99444,	-9.99706], 
-					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 2
-dist_coeffs = None #distortion coefficients
+# camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
+#                             [0.00000, 623.53830, 360.00000], 
+#                             [0.00000, 0.00000, 1.00000]])
+# cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000], 
+# 					 [0.00000,	-1.00000,	0.00000,	1.00000],
+# 					 [0.00000,	0.00000,	-1.00000,	-10.00000],
+# 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 1
+# cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578], 
+# 					 [0.00000,	-1.00000,	0.00000,	1.00000], 
+# 					 [0.10530,	0.00000,	-0.99444,	-9.99706], 
+# 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 2
+# dist_coeffs = None #distortion coefficients
 
 #ext1
 #1.00000	0.00000	0.00000	0.00000
@@ -100,8 +101,10 @@ def rectification_map(img1, img2, camera_matrix_L, dist_coeffs_L, cam1_ext, cam2
 	R1, R2, P1, P2, Q, _, _ = cv2.stereoRectify(camera_matrix_L, dist_coeffs_L,
 												camera_matrix_R, dist_coeffs_R,
 												image_size, R, T,
-												flags=0, #cv2.CALIB_ZERO_DISPARITY,
+												flags=cv2.CALIB_ZERO_DISPARITY,
 												alpha=1)
+	
+	print(Q)
 
 	map1_x, map1_y = cv2.initUndistortRectifyMap(camera_matrix_L, dist_coeffs_L, R1, P1, image_size, cv2.CV_16SC2)
 	map2_x, map2_y = cv2.initUndistortRectifyMap(camera_matrix_R, dist_coeffs_R, R2, P2, image_size, cv2.CV_16SC2)
@@ -133,9 +136,9 @@ def disparity_raw(img1_rect, img2_rect, numDisparities=16, blockSize=5, method=1
 	elif method == 2:
 		stereo = cv2.StereoSGBM_create(0, numDisparities, blockSize)
 	disparity = stereo.compute(g1, g2)
-	return disparity.astype('float32') / 16.0
+	return disparity.astype('float32')/16.0
 
-def disparity_WLS(img1_rect, img2_rect, numDisparities=32, blockSize=9, wls_lambda=8000, wls_sigma=0.5, method=1):
+def disparity_WLS(img1_rect, img2_rect, numDisparities=16, blockSize=5, wls_lambda=8000, wls_sigma=1.0, method=1):
 	left = None
 
 	g1 = cv2.cvtColor(img1_rect, cv2.COLOR_BGR2GRAY)
@@ -144,7 +147,18 @@ def disparity_WLS(img1_rect, img2_rect, numDisparities=32, blockSize=9, wls_lamb
 	if method == 1:
 		left = cv2.StereoBM_create(numDisparities=numDisparities, blockSize=blockSize)
 	elif method == 2:
-		left = cv2.StereoSGBM_create(0, numDisparities, blockSize)
+		left = cv2.StereoSGBM_create(
+		minDisparity=0,
+		numDisparities=numDisparities,      
+		blockSize=5,              
+		P1=8 * 3 * 5**2,
+		P2=32 * 3 * 5**2,
+		disp12MaxDiff=1,
+		uniquenessRatio=10,
+		speckleWindowSize=100,
+		speckleRange=32,
+		mode=cv2.StereoSGBM_MODE_SGBM_3WAY
+	)
 
 	right = cv2.ximgproc.createRightMatcher(left)
 
@@ -156,9 +170,10 @@ def disparity_WLS(img1_rect, img2_rect, numDisparities=32, blockSize=9, wls_lamb
 	wls.setSigmaColor(wls_sigma)
 
 	disparity = wls.filter(dL, img1_rect, None, dR)
-	return disparity.astype('float32') / 16.0
+	
+	return disparity.astype('float32')/16.0
 
-def match_sparse(img1_rect, img2_rect, detector, max_matches=500):
+def match_sparse(img1_rect, img2_rect, detector, max_matches=2000):
 	#detectors: 1 = AKAZE, more to be added
 	g1 = cv2.cvtColor(img1_rect, cv2.COLOR_BGR2GRAY)
 	g2 = cv2.cvtColor(img2_rect, cv2.COLOR_BGR2GRAY)
@@ -169,17 +184,17 @@ def match_sparse(img1_rect, img2_rect, detector, max_matches=500):
 		det = cv2.AKAZE_create()
 		norm = cv2.NORM_HAMMING
 	if detector == 2:
-		det = cv2.SIFT_create(nfeatures=500)
+		det = cv2.SIFT_create(nfeatures=2000)
 		norm = cv2.NORM_L2
 	if detector == 3:
-		det = cv2.ORB_create(nfeatures=500, nlevels=6)
+		det = cv2.ORB_create(nfeatures=2000, nlevels=8)
 		norm = cv2.NORM_HAMMING
 
 	# Detect keypoints and descriptors
 	kp1, des1 = det.detectAndCompute(g1, None)
 	kp2, des2 = det.detectAndCompute(g2, None)
 
-	bf = cv2.BFMatcher(norm, crossCheck=True, ) #might want to try FLANN here
+	bf = cv2.BFMatcher(norm, crossCheck=True) #might want to try FLANN here
 
 	matches = bf.match(des1, des2)
 	#matches = sorted(matches, key=lambda x: x.distance)
@@ -200,13 +215,15 @@ def initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2
 		x1, y1 = kp1[m.queryIdx].pt
 		x2, y2 = kp2[m.trainIdx].pt
 
-		pts1.append([x1, y1])
-		pts2.append([x2, y2])
+		if abs(y2 - y1) < 10:  #only consider matches within vertical threshold
+			pts1.append([x1, y1])
+			pts2.append([x2, y2])
 
-		xi, yi = int(round(x1)), int(round(y1))
-		b, g, r = img1_rect[yi, xi]
-		colors.append([r, g, b])
+			xi, yi = int(round(x1)), int(round(y1))
+			b, g, r = img1_rect[yi, xi]
+			colors.append([r, g, b])
 
+	print('Found %d matches, %d after filtering' % (len(matches), len(pts1)))
 	pts1 = np.array(pts1).T
 	pts2 = np.array(pts2).T
 
@@ -219,11 +236,15 @@ def initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2
 
 	return pointcloud
 
-def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q):
-	points_3d = cv2.reprojectImageTo3D(disparity, Q)
+def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.01):
+	points_3d = cv2.reprojectImageTo3D(disparity, Q, handleMissingValues=True)
+
+	n, m = img1_rect.shape[0], img1_rect.shape[1]
+
+	mask = (np.random.rand(n, m) < fraction).astype(np.uint8)
 
 	#valid disparity values are > 0 and finite
-	valid_mask = np.isfinite(disparity) & (disparity > 0)
+	valid_mask = np.isfinite(disparity) & (disparity > 128) & (mask == 1)
 
 	pts = points_3d.reshape(-1, 3)
 	mask_flat = valid_mask.reshape(-1)
@@ -237,7 +258,13 @@ def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q):
 	#Nx6 array: x, y, z, r, g, b
 	pointcloud = np.hstack((pts_valid, colors_valid))
 
-	return pointcloud
+	def compress_z(pointcloud, z_range=(0, 1)):
+		z = pointcloud[:, 2]
+		z_min, z_max = z.min(), z.max()
+		pointcloud[:, 2] = (z - z_min) / (z_max - z_min) * (z_range[1] - z_range[0]) + z_range[0]
+		return pointcloud
+
+	return compress_z(pointcloud, (10,200))
 
 def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P2):
 	#equivalent to the main method but with parameters provided
@@ -247,6 +274,23 @@ def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P
 	if img1_rect is not None and img2_rect is not None:
 		kp1, kp2, matches = match_sparse(img1_rect, img2_rect, 3)
 		pointcloud = initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2)
+		return pointcloud
+	
+def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q):
+	global vflag
+	img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
+
+	if img1_rect is not None and img2_rect is not None:
+		disparity = disparity_WLS(img1_rect, img2_rect, method=2, numDisparities=256)
+		#print(f"Disparity range: min={disparity[disparity > 0].min():.2f}, max={disparity[disparity > 0].max():.2f}, std={disparity[disparity > 0].std():.2f}")
+
+		# Visualize
+		# if not vflag:
+		# 	vflag = True
+		# 	vis = cv2.normalize(disparity, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+		# 	cv2.imshow("Disparity", cv2.applyColorMap(vis, cv2.COLORMAP_JET))
+
+		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q)
 		return pointcloud
 
 class PointcloudTests(unittest.TestCase):
