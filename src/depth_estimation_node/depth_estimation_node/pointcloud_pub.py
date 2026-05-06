@@ -23,18 +23,24 @@ qos = QoSProfile(
 #img1 = cv2.imread('../images/left.png')
 #img2 = cv2.imread('../images/right.png')
 
-camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
-                            [0.00000, 623.53830, 360.00000], 
-                            [0.00000, 0.00000, 1.00000]])
-cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000], 
-					 [0.00000,	-1.00000,	0.00000,	1.00000],
-					 [0.00000,	0.00000,	-1.00000,	-10.00000],
-					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 1
-cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578], 
-					 [0.00000,	-1.00000,	0.00000,	1.00000], 
-					 [0.10530,	0.00000,	-0.99444,	-9.99706], 
-					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 2
-dist_coeffs = None #distortion coefficients
+camera_matrix_L = np.array([[2.12586235e+03, 0.00000000e+00, 6.08822181e+02],
+                             [0.00000000e+00, 2.13144724e+03, 5.00933963e+02],
+                             [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+dist_coeffs_L = np.array([-0.07949666, 0.29615714, -0.0039992, -0.00234051, -0.83580527])
+
+camera_matrix_R = np.array([[2.07018872e+03, 0.00000000e+00, 6.34785055e+02],
+                             [0.00000000e+00, 2.06888960e+03, 4.74850490e+02],
+                             [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+dist_coeffs_R = np.array([-0.09998571, 0.57469675, -0.00285518, -0.00264086, -1.54810632])
+
+cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
+                     [0.00000, -1.00000, 0.00000, 1.00000],
+                     [0.00000, 0.00000, -1.00000, -10.00000],
+                     [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 1
+cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578],
+                     [0.00000, -1.00000, 0.00000, 1.00000],
+                     [0.10530, 0.00000, -0.99444, -9.99706],
+                     [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 2
 
 class PointCloudPublisher(Node):
     def __init__(self):
@@ -76,7 +82,7 @@ class PointCloudPublisher(Node):
             return
         if not self.rectflag:
             try:
-                self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(self.imgL, self.imgR, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
+                self.map1_x, self.map1_y, self.map2_x, self.map2_y, self.P1, self.P2, self.Q = rectification_map(self.imgL, self.imgR, camera_matrix_L, dist_coeffs_L, cam1_ext, cam2_ext, camera_matrix_R, dist_coeffs_R)
                 self.rectflag = True
             except Exception as e:
                 print('Rectification failed:', e)

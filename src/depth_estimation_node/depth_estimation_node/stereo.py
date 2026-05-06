@@ -84,24 +84,29 @@ def extract_R_T(cam1_ext, cam2_ext):
 	T = rel[:3, 3].reshape(3, 1)
 	return R, T
 
-def rectification_map(img1, img2, camera_matrix, dist_coeffs, cam1_ext, cam2_ext):
+def rectification_map(img1, img2, camera_matrix_L, dist_coeffs_L, cam1_ext, cam2_ext, camera_matrix_R=None, dist_coeffs_R=None):
 	if img1 is None or img2 is None:
 		raise ValueError('Input images not loaded')
-	if camera_matrix is None:
-		raise ValueError('camera_matrix and dist_coeffs must be provided')
+	if camera_matrix_L is None:
+		raise ValueError('camera_matrix_L must be provided')
+
+	if camera_matrix_R is None:
+		camera_matrix_R = camera_matrix_L
+	if dist_coeffs_R is None:
+		dist_coeffs_R = dist_coeffs_L
 
 	R, T = extract_R_T(cam1_ext, cam2_ext)
 
 	image_size = (img1.shape[1], img1.shape[0])
 
-	R1, R2, P1, P2, Q, _, _ = cv2.stereoRectify(camera_matrix, dist_coeffs,
-												camera_matrix, dist_coeffs,
+	R1, R2, P1, P2, Q, _, _ = cv2.stereoRectify(camera_matrix_L, dist_coeffs_L,
+												camera_matrix_R, dist_coeffs_R,
 												image_size, R, T,
 												flags=0, #cv2.CALIB_ZERO_DISPARITY,
 												alpha=1)
 
-	map1_x, map1_y = cv2.initUndistortRectifyMap(camera_matrix, dist_coeffs, R1, P1, image_size, cv2.CV_16SC2)
-	map2_x, map2_y = cv2.initUndistortRectifyMap(camera_matrix, dist_coeffs, R2, P2, image_size, cv2.CV_16SC2)
+	map1_x, map1_y = cv2.initUndistortRectifyMap(camera_matrix_L, dist_coeffs_L, R1, P1, image_size, cv2.CV_16SC2)
+	map2_x, map2_y = cv2.initUndistortRectifyMap(camera_matrix_R, dist_coeffs_R, R2, P2, image_size, cv2.CV_16SC2)
 
 	return map1_x, map1_y, map2_x, map2_y, P1, P2, Q
 
