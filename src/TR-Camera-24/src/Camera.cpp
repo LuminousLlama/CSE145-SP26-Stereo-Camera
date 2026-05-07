@@ -123,7 +123,12 @@ int Camera::init(double exposure, bool trigger) {
     }
 
     // start grabbing
-    this->status = IMV_StartGrabbing(this->devHandle);
+    // Tune USB transfer for better throughput (Linux driverless mode only)
+    IMV_USB_SetUrbTransfer(this->devHandle, 32, 64); // 32 blocks, 64MB each
+
+    // Use latest image strategy to avoid processing stale frames
+    this->status = IMV_StartGrabbingEx(this->devHandle, 0, grabStrartegyLatestImage);
+    // this->status = IMV_StartGrabbing(this->devHandle);
     if (IMV_OK != this->status) {
         printf("Open camera failed! ErrorCode[%d]\n", this->status);
         return this->status;
@@ -141,19 +146,36 @@ int Camera::getImage(cv::Mat &img) {
         return this->status;
     }
 
-    // Wrap the Bayer data (no copy)
-    cv::Mat bayer(raw_frame.frameInfo.height,
-              raw_frame.frameInfo.width,
-              CV_8U,
-              raw_frame.pData); 
+    // Use SDK pixel convert instead of OpenCV cvtColor
+    IMV_PixelConvertParam convertParam;
+    memset(&convertParam, 0, sizeof(convertParam));
+    convertParam.nWidth       = raw_frame.frameInfo.width;
+    convertParam.nHeight      = raw_frame.frameInfo.height;
+    convertParam.ePixelFormat = raw_frame.frameInfo.pixelFormat;
+    convertParam.pSrcData     = raw_frame.pData;
+    convertParam.nSrcDataLen  = raw_frame.frameInfo.size;
+    convertParam.nPaddingX    = raw_frame.frameInfo.paddingX;
+    convertParam.nPaddingY    = raw_frame.frameInfo.paddingY;
+    convertParam.eBayerDemosaic = demosaicEdgeSensing;
+    convertParam.eDstPixelFormat = gvspPixelRGB8;
 
-    cv::cvtColor(bayer, img, cv::COLOR_BayerRG2RGB_EA);
+    img.create(raw_frame.frameInfo.height, raw_frame.frameInfo.width, CV_8UC3);
+    convertParam.pDstBuf     = img.data;
+    convertParam.nDstBufSize = raw_frame.frameInfo.width * raw_frame.frameInfo.height * 3;
+
+    this->status = IMV_PixelConvert(this->devHandle, &convertParam);
+    if (IMV_OK != this->status) {
+        printf("PixelConvert failed! ErrorCode[%d]\n", this->status);
+        IMV_ReleaseFrame(this->devHandle, &raw_frame);
+        return this->status;
+    }
 
     this->status = IMV_ReleaseFrame(this->devHandle, &raw_frame);
     if (IMV_OK != this->status) {
         printf("release raw_frame failed! ErrorCode[%d]\n", this->status);
         return this->status;
     }
+
     return 0;
 }
 
