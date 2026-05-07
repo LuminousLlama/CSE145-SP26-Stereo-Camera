@@ -19,12 +19,14 @@ int main(int argc, char ** argv)
   // Declare parameters with defaults
   node->declare_parameter("exposure_time", 4000.0);
   node->declare_parameter("trigger_mode", false);
+  node->declare_parameter("half_res", false);
   node->declare_parameter("serial_l", std::string("BC24484AAK00009"));
   node->declare_parameter("serial_r", std::string("BC24484AAK00010"));
 
   // Get parameter values
   double exposure_time = node->get_parameter("exposure_time").as_double();
   bool trigger_mode    = node->get_parameter("trigger_mode").as_bool();
+  bool half_res        = node->get_parameter("half_res").as_bool();
   std::string serial_l = node->get_parameter("serial_l").as_string();
   std::string serial_r = node->get_parameter("serial_r").as_string();
 
@@ -36,8 +38,8 @@ int main(int argc, char ** argv)
   Camera cameraL(serial_l);
   Camera cameraR(serial_r);
 
-  cameraL.init(exposure_time, trigger_mode);
-  cameraR.init(exposure_time, trigger_mode);
+  cameraL.init(exposure_time, trigger_mode, half_res);
+  cameraR.init(exposure_time, trigger_mode, half_res);
 
   sensor_msgs::msg::Image msgL, msgR;
   msgL.encoding = "rgb8"; msgR.encoding = "rgb8";

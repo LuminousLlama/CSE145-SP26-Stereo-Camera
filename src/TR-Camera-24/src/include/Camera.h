@@ -20,7 +20,7 @@ public:
 
     ~Camera();
 
-    int init(double exposure, bool trigger);
+    int init(double exposure, bool trigger, bool half_res);
 
     int getImage(cv::Mat &img);
 

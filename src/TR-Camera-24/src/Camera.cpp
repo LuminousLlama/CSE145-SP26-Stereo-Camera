@@ -85,7 +85,7 @@ Camera::Camera(std::string serialNumber) {
     }
 }
 
-int Camera::init(double exposure, bool trigger) {
+int Camera::init(double exposure, bool trigger, bool half_res) {
     // open camera
     this->status = IMV_Open(this->devHandle);
 
@@ -106,8 +106,12 @@ int Camera::init(double exposure, bool trigger) {
     }
 
     // Set feature value
-
-    this->status = setProperty(exposure, 1280, 1024);
+    if (!half_res) {
+        this->status = setProperty(exposure, 1280, 1024);
+    }
+    else {
+        this->status = setProperty(exposure, 640, 512);
+    }
 
     // Set hardware trigger
 
