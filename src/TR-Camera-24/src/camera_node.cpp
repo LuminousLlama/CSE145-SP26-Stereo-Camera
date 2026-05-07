@@ -28,11 +28,10 @@ int main(int argc, char ** argv)
   std::string serial_l = node->get_parameter("serial_l").as_string();
   std::string serial_r = node->get_parameter("serial_r").as_string();
 
-  image_transport::ImageTransport it(node);
-  auto pubL = node->create_publisher<sensor_msgs::msg::Image>("camera/imageL", 
-    rclcpp::QoS(1).best_effort());
-  auto pubR = node->create_publisher<sensor_msgs::msg::Image>("camera/imageR", 
-    rclcpp::QoS(1).best_effort());
+  auto pubL = image_transport::create_publisher(node.get(), "camera/imageL",
+    rclcpp::QoS(1).best_effort().get_rmw_qos_profile());
+  auto pubR = image_transport::create_publisher(node.get(), "camera/imageR",
+    rclcpp::QoS(1).best_effort().get_rmw_qos_profile());
 
   Camera cameraL(serial_l);
   Camera cameraR(serial_r);
@@ -90,8 +89,8 @@ int main(int argc, char ** argv)
     buildL.join();
     buildR.join();
 
-    pubL->publish(std::move(msgL));
-    pubR->publish(std::move(msgR));
+    pubL.publish(*msgL);
+    pubR.publish(*msgR);
     auto t2 = std::chrono::steady_clock::now();
 
     printf("%ldms %ldms\n", (t1-t0).count(), (t2-t1).count());
