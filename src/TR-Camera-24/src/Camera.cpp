@@ -134,11 +134,11 @@ int Camera::init(double exposure, bool trigger) {
 int Camera::getImage(cv::Mat &img) {
     IMV_Frame raw_frame;
 
-    this->status = IMV_GetFrame(this->devHandle, &raw_frame, 15);
+    this->status = IMV_GetFrame(this->devHandle, &raw_frame, 30);
 
     if (IMV_OK != this->status) {
         printf("Get raw_frame failed! ErrorCode[%d]\n", this->status);
-        exit(-1); // if we can't get a frame, kill the program
+        // exit(-1); // if we can't get a frame, kill the program
         return this->status;
     }
 
