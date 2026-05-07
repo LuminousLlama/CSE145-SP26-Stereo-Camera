@@ -7,8 +7,6 @@
 #include "sensor_msgs/msg/image.hpp"
 #include <thread>
 #include <future>
-#include <mutex>
-#include <condition_variable>
 #include <chrono>
 
 int main(int argc, char ** argv)
@@ -40,51 +38,24 @@ int main(int argc, char ** argv)
 
   cameraL.init(exposure_time, trigger_mode, half_res);
   cameraR.init(exposure_time, trigger_mode, half_res);
+  
+  sensor_msgs::msg::Image msgL;
+  sensor_msgs::msg::Image msgR;
 
-  sensor_msgs::msg::Image msgL, msgR;
-  msgL.encoding = "rgb8"; msgR.encoding = "rgb8";
-  msgL.is_bigendian = false; msgR.is_bigendian = false;
+  msgL.encoding = "rgb8";
+  msgR.encoding = "rgb8";
+
+  msgL.is_bigendian = false;
+  msgR.is_bigendian = false;
+
   msgL.header.frame_id = "camera_left";
   msgR.header.frame_id = "camera_right";
   bool allocated = false;
 
-  // Persistent memcpy thread state
-  bool running = true;
-  cv::Mat imageL, imageR;
-
-  std::mutex copyMutexL, copyMutexR;
-  std::condition_variable copyCvL, copyCvR;
-  bool doCopyL = false, doCopyR = false;
-  bool copyDoneL = false, copyDoneR = false;
-
-  std::thread copyThreadL([&]() {
-    while (running) {
-      std::unique_lock<std::mutex> lock(copyMutexL);
-      copyCvL.wait(lock, [&]{ return doCopyL || !running; });
-      if (!running) break;
-      memcpy(msgL.data.data(), imageL.data, imageL.total() * imageL.elemSize());
-      doCopyL = false;
-      copyDoneL = true;
-      copyCvL.notify_one();
-    }
-  });
-
-  std::thread copyThreadR([&]() {
-    while (running) {
-      std::unique_lock<std::mutex> lock(copyMutexR);
-      copyCvR.wait(lock, [&]{ return doCopyR || !running; });
-      if (!running) break;
-      memcpy(msgR.data.data(), imageR.data, imageR.total() * imageR.elemSize());
-      doCopyR = false;
-      copyDoneR = true;
-      copyCvR.notify_one();
-    }
-  });
-
-  while (rclcpp::ok()) {
+  while (rclcpp::ok()) {    
+    // Grab and convert both cameras in parallel using async
     auto t0 = std::chrono::steady_clock::now();
-
-    // Grab both cameras in parallel with async
+    cv::Mat imageL, imageR;
     auto futureL = std::async(std::launch::async, [&]() {
       return cameraL.getImage(imageL);
     });
@@ -101,10 +72,14 @@ int main(int argc, char ** argv)
 
     auto t1 = std::chrono::steady_clock::now();
 
+    // Allocate ONCE
     if (!allocated) {
-      msgL.width  = imageL.cols; msgL.height = imageL.rows;
+      msgL.width  = imageL.cols;
+      msgL.height = imageL.rows;
       msgL.step   = imageL.cols * 3;
-      msgR.width  = imageR.cols; msgR.height = imageR.rows;
+
+      msgR.width  = imageR.cols;
+      msgR.height = imageR.rows;
       msgR.step   = imageR.cols * 3;
       msgL.data.resize(imageL.total() * imageL.elemSize());
       msgR.data.resize(imageR.total() * imageR.elemSize());
@@ -115,47 +90,44 @@ int main(int argc, char ** argv)
     msgL.header.stamp = stamp;
     msgR.header.stamp = stamp;
 
-    // Trigger persistent memcpy threads
-    {
-      std::lock_guard<std::mutex> lock(copyMutexL);
-      copyDoneL = false;
-      doCopyL = true;
-      copyCvL.notify_one();
-    }
-    {
-      std::lock_guard<std::mutex> lock(copyMutexR);
-      copyDoneR = false;
-      doCopyR = true;
-      copyCvR.notify_one();
-    }
+    // Parallel memcpy
+    auto copyL = std::async(std::launch::async, [&]() {
+      memcpy(
+        msgL.data.data(),
+        imageL.data,
+        imageL.total() * imageL.elemSize()
+      );
+    });
 
-    // Wait for both copies to finish
-    {
-      std::unique_lock<std::mutex> lock(copyMutexL);
-      copyCvL.wait(lock, [&]{ return copyDoneL; });
-    }
-    {
-      std::unique_lock<std::mutex> lock(copyMutexR);
-      copyCvR.wait(lock, [&]{ return copyDoneR; });
-    }
+    auto copyR = std::async(std::launch::async, [&]() {
+      memcpy(
+        msgR.data.data(),
+        imageR.data,
+        imageR.total() * imageR.elemSize()
+      );
+    });
+
+    copyL.get();
+    copyR.get();
 
     pubL.publish(msgL);
     pubR.publish(msgR);
 
     auto t2 = std::chrono::steady_clock::now();
-    auto capture_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
-    auto publish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    RCLCPP_INFO_THROTTLE(node->get_logger(), *node->get_clock(), 1000,
-      "capture=%ld ms publish=%ld ms", capture_ms, publish_ms);
+
+    auto capture_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+
+    auto publish_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+
+    RCLCPP_INFO(node->get_logger(),
+      "capture=%ld ms publish=%ld ms",
+      capture_ms,
+      publish_ms);
 
     rclcpp::spin_some(node);
   }
-
-  running = false;
-  copyCvL.notify_all();
-  copyCvR.notify_all();
-  copyThreadL.join();
-  copyThreadR.join();
   rclcpp::shutdown();
   return 0;
 }
