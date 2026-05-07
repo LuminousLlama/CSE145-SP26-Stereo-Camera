@@ -27,9 +27,9 @@ int main(int argc, char ** argv)
   std::string serial_r = node->get_parameter("serial_r").as_string();
 
   auto pubL = image_transport::create_publisher(node.get(), "camera/imageL",
-    rclcpp::QoS(1).best_effort().get_rmw_qos_profile());
+    rclcpp::SensorDataQoS().get_rmw_qos_profile());
   auto pubR = image_transport::create_publisher(node.get(), "camera/imageR",
-    rclcpp::QoS(1).best_effort().get_rmw_qos_profile());
+    rclcpp::SensorDataQoS().get_rmw_qos_profile());
 
   Camera cameraL(serial_l);
   Camera cameraR(serial_r);
