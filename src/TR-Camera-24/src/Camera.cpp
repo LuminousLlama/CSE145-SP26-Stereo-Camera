@@ -138,44 +138,28 @@ int Camera::init(double exposure, bool trigger) {
 
 int Camera::getImage(cv::Mat &img) {
     IMV_Frame raw_frame;
-
     this->status = IMV_GetFrame(this->devHandle, &raw_frame, 30);
-
     if (IMV_OK != this->status) {
         printf("Get raw_frame failed! ErrorCode[%d]\n", this->status);
         return this->status;
     }
 
-    // Use SDK pixel convert instead of OpenCV cvtColor
-    IMV_PixelConvertParam convertParam;
-    memset(&convertParam, 0, sizeof(convertParam));
-    convertParam.nWidth       = raw_frame.frameInfo.width;
-    convertParam.nHeight      = raw_frame.frameInfo.height;
-    convertParam.ePixelFormat = raw_frame.frameInfo.pixelFormat;
-    convertParam.pSrcData     = raw_frame.pData;
-    convertParam.nSrcDataLen  = raw_frame.frameInfo.size;
-    convertParam.nPaddingX    = raw_frame.frameInfo.paddingX;
-    convertParam.nPaddingY    = raw_frame.frameInfo.paddingY;
-    convertParam.eBayerDemosaic = demosaicEdgeSensing;
-    convertParam.eDstPixelFormat = gvspPixelRGB8;
-
-    img.create(raw_frame.frameInfo.height, raw_frame.frameInfo.width, CV_8UC3);
-    convertParam.pDstBuf     = img.data;
-    convertParam.nDstBufSize = raw_frame.frameInfo.width * raw_frame.frameInfo.height * 3;
-
-    this->status = IMV_PixelConvert(this->devHandle, &convertParam);
-    if (IMV_OK != this->status) {
-        printf("PixelConvert failed! ErrorCode[%d]\n", this->status);
+    if (raw_frame.pData == nullptr) {
         IMV_ReleaseFrame(this->devHandle, &raw_frame);
-        return this->status;
+        return -1;
     }
+
+    cv::Mat bayer(raw_frame.frameInfo.height,
+                  raw_frame.frameInfo.width,
+                  CV_8U,
+                  raw_frame.pData);
+    cv::cvtColor(bayer, img, cv::COLOR_BayerRG2RGB_EA);
 
     this->status = IMV_ReleaseFrame(this->devHandle, &raw_frame);
     if (IMV_OK != this->status) {
         printf("release raw_frame failed! ErrorCode[%d]\n", this->status);
         return this->status;
     }
-
     return 0;
 }
 
