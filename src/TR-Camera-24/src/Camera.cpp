@@ -134,7 +134,7 @@ int Camera::init(double exposure, bool trigger) {
 int Camera::getImage(cv::Mat &img) {
     IMV_Frame raw_frame;
 
-    this->status = IMV_GetFrame(this->devHandle, &raw_frame, 300);
+    this->status = IMV_GetFrame(this->devHandle, &raw_frame, 15);
 
     if (IMV_OK != this->status) {
         printf("Get raw_frame failed! ErrorCode[%d]\n", this->status);
@@ -148,7 +148,7 @@ int Camera::getImage(cv::Mat &img) {
               CV_8U,
               raw_frame.pData); 
 
-    cv::cvtColor(bayer, img, cv::COLOR_BayerRG2RGB);
+    cv::cvtColor(bayer, img, cv::COLOR_BayerRG2RGB_EA);
 
     // if(small){
     //     //compute the center pixel of img

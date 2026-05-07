@@ -71,7 +71,9 @@ int main(int argc, char ** argv)
     msgL->encoding = "bgr8";
     msgL->is_bigendian = false;
     msgL->step = imageL.cols * 3;
-    msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
+    msgL->data.resize(imageL.total() * imageL.elemSize());
+    memcpy(msgL->data.data(), imageL.data, msgL->data.size());
+    // msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
     pubL->publish(std::move(msgL));
 
     auto msgR = std::make_unique<sensor_msgs::msg::Image>();
@@ -82,7 +84,9 @@ int main(int argc, char ** argv)
     msgR->encoding = "bgr8";
     msgR->is_bigendian = false;
     msgR->step = imageR.cols * 3;
-    msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
+    msgL->data.resize(imageL.total() * imageL.elemSize());
+    memcpy(msgL->data.data(), imageL.data, msgL->data.size());
+    // msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
     pubR->publish(std::move(msgR));
     auto t2 = std::chrono::steady_clock::now();
 

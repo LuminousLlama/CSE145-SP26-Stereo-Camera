@@ -59,6 +59,12 @@ install(PROGRAMS
   RENAME trigger_node
 )
 
+install(PROGRAMS
+  src/fps_monitor.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME fps_monitor
+)
+
 # Install FastDDS profile
 install(FILES
   fastdds_profile.xml
