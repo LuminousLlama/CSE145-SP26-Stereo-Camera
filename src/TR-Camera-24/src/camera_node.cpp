@@ -8,6 +8,7 @@
 #include "sensor_msgs/msg/image.hpp"
 #include <thread>
 #include <future>
+#include <chrono>
 
 int main(int argc, char ** argv)
 {
@@ -43,6 +44,7 @@ int main(int argc, char ** argv)
     cv::Mat imageL, imageR;
 
     // Grab and convert both cameras in parallel using async
+    auto t0 = std::chrono::steady_clock::now();
     auto futureL = std::async(std::launch::async, [&]() {
       return cameraL.getImage(imageL);
     });
@@ -56,6 +58,7 @@ int main(int argc, char ** argv)
     if (statusL != 0 || statusR != 0) {
         continue;  // skip if either failed
     }
+    auto t1 = std::chrono::steady_clock::now();
 
     auto stamp = node->now();
 
@@ -81,6 +84,9 @@ int main(int argc, char ** argv)
     msgR->step = imageR.cols * 3;
     msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
     pubR->publish(std::move(msgR));
+    auto t2 = std::chrono::steady_clock::now();
+
+    printf("%ldms %ldms\n", (t1-t0).count(), (t2-t1).count());
 
     rclcpp::spin_some(node);
   }
