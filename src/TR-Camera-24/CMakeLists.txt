@@ -59,6 +59,17 @@ install(PROGRAMS
   RENAME trigger_node
 )
 
+# Install FastDDS profile
+install(FILES
+  fastdds_profile.xml
+  DESTINATION share/${PROJECT_NAME}
+)
+
+# Set env vars automatically when package is sourced
+ament_environment_hooks(
+  "${CMAKE_CURRENT_SOURCE_DIR}/env_hooks/camera_node.sh"
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

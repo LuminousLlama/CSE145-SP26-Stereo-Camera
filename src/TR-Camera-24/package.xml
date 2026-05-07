@@ -19,6 +19,7 @@
   <depend>cv_bridge</depend>
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>
+  <depend>rmw_fastrtps_cpp</depend>
   <depend>rclpy</depend>
   <depend>python3-gpiod</depend>
 

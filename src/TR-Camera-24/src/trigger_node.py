@@ -30,6 +30,7 @@ class TriggerNode(Node):
 
     def trigger_loop(self):
         while self.running:
+            print("triggered!")
             loop_start = time.monotonic()
             self.line.set_value(GPIO_PIN, gpiod.line.Value.ACTIVE)
             time.sleep(PULSE_US / 1_000_000)

@@ -5,7 +5,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "include/Camera.h"
 #include "std_msgs/msg/header.hpp"
+#include "sensor_msgs/msg/image.hpp"
 #include <thread>
+#include <future>
 
 int main(int argc, char ** argv)
 {
@@ -26,23 +28,30 @@ int main(int argc, char ** argv)
   std::string serial_r = node->get_parameter("serial_r").as_string();
 
   image_transport::ImageTransport it(node);
-  image_transport::Publisher pubL = it.advertise("camera/imageL", 1);
-  image_transport::Publisher pubR = it.advertise("camera/imageR", 1);
+  auto pubL = node->create_publisher<sensor_msgs::msg::Image>("camera/imageL", 
+    rclcpp::QoS(1).best_effort());
+  auto pubR = node->create_publisher<sensor_msgs::msg::Image>("camera/imageR", 
+    rclcpp::QoS(1).best_effort());
 
   Camera cameraL(serial_l);
   Camera cameraR(serial_r);
 
   cameraL.init(exposure_time, trigger_mode);
   cameraR.init(exposure_time, trigger_mode);
-  rclcpp::WallRate loop_rate(100);
+  
   while (rclcpp::ok()) {
     cv::Mat imageL, imageR;
-    int statusL = 0, statusR = 0;
 
-    std::thread grabL([&]() { statusL = cameraL.getImage(imageL); });
-    std::thread grabR([&]() { statusR = cameraR.getImage(imageR); });
-    grabL.join();
-    grabR.join();
+    // Grab and convert both cameras in parallel using async
+    auto futureL = std::async(std::launch::async, [&]() {
+      return cameraL.getImage(imageL);
+    });
+    auto futureR = std::async(std::launch::async, [&]() {
+      return cameraR.getImage(imageR);
+    });
+
+    int statusL = futureL.get();
+    int statusR = futureR.get();
 
     if (statusL != 0 || statusR != 0) {
         continue;  // skip if either failed
@@ -50,17 +59,32 @@ int main(int argc, char ** argv)
 
     auto stamp = node->now();
 
-    std_msgs::msg::Header hdrL;
-    auto msgL = cv_bridge::CvImage(hdrL, "bgr8", imageL).toImageMsg();
-    msgL->header.stamp = stamp;
-    pubL.publish(msgL);
+    // Zero-copy publish for L
+    auto loanedL = pubL->borrow_loaned_message();
+    auto & msgL = loanedL.get();
+    msgL.header.stamp = stamp;
+    msgL.header.frame_id = "camera_left";
+    msgL.height = imageL.rows;
+    msgL.width = imageL.cols;
+    msgL.encoding = "bgr8";
+    msgL.is_bigendian = false;
+    msgL.step = imageL.cols * 3;
+    memcpy(msgL.data.data(), imageL.data, imageL.total() * imageL.elemSize());
+    pubL->publish(std::move(loanedL));
 
-    std_msgs::msg::Header hdrR;
-    auto msgR = cv_bridge::CvImage(hdrR, "bgr8", imageR).toImageMsg();
-    msgR->header.stamp = stamp;
-    pubR.publish(msgR);
+    // Zero-copy publish for R
+    auto loanedR = pubR->borrow_loaned_message();
+    auto & msgR = loanedR.get();
+    msgR.header.stamp = stamp;
+    msgR.header.frame_id = "camera_right";
+    msgR.height = imageR.rows;
+    msgR.width = imageR.cols;
+    msgR.encoding = "bgr8";
+    msgR.is_bigendian = false;
+    msgR.step = imageR.cols * 3;
+    memcpy(msgR.data.data(), imageR.data, imageR.total() * imageR.elemSize());
+    pubR->publish(std::move(loanedR));
 
     rclcpp::spin_some(node);
-    loop_rate.sleep();
   }
 }
