@@ -59,34 +59,38 @@ int main(int argc, char ** argv)
         continue;  // skip if either failed
     }
     auto t1 = std::chrono::steady_clock::now();
-
     auto stamp = node->now();
 
-    // Replace the loaned message blocks with this:
+    // Build both messages in parallel
     auto msgL = std::make_unique<sensor_msgs::msg::Image>();
-    msgL->header.stamp = stamp;
-    msgL->header.frame_id = "camera_left";
-    msgL->height = imageL.rows;
-    msgL->width = imageL.cols;
-    msgL->encoding = "bgr8";
-    msgL->is_bigendian = false;
-    msgL->step = imageL.cols * 3;
-    // msgL->data.resize(imageL.total() * imageL.elemSize());
-    // memcpy(msgL->data.data(), imageL.data, msgL->data.size());
-    msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
-    pubL->publish(std::move(msgL));
-
     auto msgR = std::make_unique<sensor_msgs::msg::Image>();
-    msgR->header.stamp = stamp;
-    msgR->header.frame_id = "camera_right";
-    msgR->height = imageR.rows;
-    msgR->width = imageR.cols;
-    msgR->encoding = "bgr8";
-    msgR->is_bigendian = false;
-    msgR->step = imageR.cols * 3;
-    // msgL->data.resize(imageL.total() * imageL.elemSize());
-    // memcpy(msgL->data.data(), imageL.data, msgL->data.size());
-    msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
+
+    std::thread buildL([&]() {
+        msgL->header.stamp = stamp;
+        msgL->header.frame_id = "camera_left";
+        msgL->height = imageL.rows;
+        msgL->width = imageL.cols;
+        msgL->encoding = "bgr8";
+        msgL->is_bigendian = false;
+        msgL->step = imageL.cols * 3;
+        msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
+    });
+
+    std::thread buildR([&]() {
+        msgR->header.stamp = stamp;
+        msgR->header.frame_id = "camera_right";
+        msgR->height = imageR.rows;
+        msgR->width = imageR.cols;
+        msgR->encoding = "bgr8";
+        msgR->is_bigendian = false;
+        msgR->step = imageR.cols * 3;
+        msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
+    });
+
+    buildL.join();
+    buildR.join();
+
+    pubL->publish(std::move(msgL));
     pubR->publish(std::move(msgR));
     auto t2 = std::chrono::steady_clock::now();
 
