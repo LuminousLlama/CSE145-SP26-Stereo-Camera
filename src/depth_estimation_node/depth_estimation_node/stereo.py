@@ -238,13 +238,20 @@ def initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2
 
 def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.01):
 	points_3d = cv2.reprojectImageTo3D(disparity, Q, handleMissingValues=True)
+    
+	# Convert OpenCV (X right, Y down, Z forward) to ROS (X forward, Y left, Z up)
+	points_3d_ros = np.zeros_like(points_3d)
+	points_3d_ros[..., 0] =  points_3d[..., 2]  # ROS X = OpenCV Z (forward)
+	points_3d_ros[..., 1] = -points_3d[..., 0]  # ROS Y = -OpenCV X (left)
+	points_3d_ros[..., 2] = -points_3d[..., 1]  # ROS Z = -OpenCV Y (up)
+	points_3d = points_3d_ros
 
 	n, m = img1_rect.shape[0], img1_rect.shape[1]
 
 	mask = (np.random.rand(n, m) < fraction).astype(np.uint8)
 
 	#valid disparity values are > 0 and finite
-	valid_mask = np.isfinite(disparity) & (disparity > 128) & (mask == 1)
+	valid_mask = np.isfinite(disparity) & (disparity > 0) & (mask == 1)
 
 	pts = points_3d.reshape(-1, 3)
 	mask_flat = valid_mask.reshape(-1)
@@ -257,14 +264,7 @@ def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.0
 
 	#Nx6 array: x, y, z, r, g, b
 	pointcloud = np.hstack((pts_valid, colors_valid))
-
-	def compress_z(pointcloud, z_range=(0, 1)):
-		z = pointcloud[:, 2]
-		z_min, z_max = z.min(), z.max()
-		pointcloud[:, 2] = (z - z_min) / (z_max - z_min) * (z_range[1] - z_range[0]) + z_range[0]
-		return pointcloud
-
-	return compress_z(pointcloud, (10,200))
+	return pointcloud
 
 def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P2):
 	#equivalent to the main method but with parameters provided
