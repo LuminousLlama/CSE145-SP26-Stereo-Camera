@@ -15,7 +15,7 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared("image_publisher");
 
   // Declare parameters with defaults
-  node->declare_parameter("exposure_time", 8000.0);
+  node->declare_parameter("exposure_time", 4000.0);
   node->declare_parameter("trigger_mode", false);
   node->declare_parameter("serial_l", std::string("BC24484AAK00009"));
   node->declare_parameter("serial_r", std::string("BC24484AAK00010"));
@@ -93,24 +93,24 @@ int main(int argc, char ** argv)
     msgR.header.stamp = stamp;
 
     // Parallel memcpy
-    // auto copyL = std::async(std::launch::async, [&]() {
+    auto copyL = std::async(std::launch::async, [&]() {
       memcpy(
         msgL.data.data(),
         imageL.data,
         imageL.total() * imageL.elemSize()
       );
-    // });
+    });
 
-    // auto copyR = std::async(std::launch::async, [&]() {
+    auto copyR = std::async(std::launch::async, [&]() {
       memcpy(
         msgR.data.data(),
         imageR.data,
         imageR.total() * imageR.elemSize()
       );
-    // });
+    });
 
-    // copyL.get();
-    // copyR.get();
+    copyL.get();
+    copyR.get();
 
     pubL.publish(msgL);
     pubR.publish(msgR);
