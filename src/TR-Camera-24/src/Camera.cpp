@@ -138,7 +138,6 @@ int Camera::getImage(cv::Mat &img) {
 
     if (IMV_OK != this->status) {
         printf("Get raw_frame failed! ErrorCode[%d]\n", this->status);
-        // exit(-1); // if we can't get a frame, kill the program
         return this->status;
     }
 
@@ -150,22 +149,6 @@ int Camera::getImage(cv::Mat &img) {
 
     cv::cvtColor(bayer, img, cv::COLOR_BayerRG2RGB_EA);
 
-    // if(small){
-    //     //compute the center pixel of img
-    //     cv::Point2f center;
-    //     center.x = img.cols / 2;
-    //     center.y = img.rows / 2;
-    //     int halfheight = (img.rows / 2) - 1;
-
-
-
-    //     // Resize image to 640 x 640 without distorting the aspect ratio
-    //     // cv::Mat resized_img;
-    //     cv::Size size(640, 640);
-    //     cv::resize(img(cv::Range{static_cast<int>(center.y - halfheight), static_cast<int>(center.y + halfheight)},
-    //                 cv::Range{static_cast<int>(center.x - halfheight), static_cast<int>(center.x + halfheight)}), img,
-    //             size, cv::INTER_AREA);
-    // }
     this->status = IMV_ReleaseFrame(this->devHandle, &raw_frame);
     if (IMV_OK != this->status) {
         printf("release raw_frame failed! ErrorCode[%d]\n", this->status);

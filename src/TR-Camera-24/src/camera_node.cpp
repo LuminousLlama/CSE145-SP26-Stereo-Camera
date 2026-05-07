@@ -37,11 +37,24 @@ int main(int argc, char ** argv)
   cameraL.init(exposure_time, trigger_mode);
   cameraR.init(exposure_time, trigger_mode);
   
-  while (rclcpp::ok()) {
-    cv::Mat imageL, imageR;
+  sensor_msgs::msg::Image msgL;
+  sensor_msgs::msg::Image msgR;
 
+  msgL.encoding = "rgb8";
+  msgR.encoding = "rgb8";
+
+  msgL.is_bigendian = false;
+  msgR.is_bigendian = false;
+
+  msgL.header.frame_id = "camera_left";
+  msgR.header.frame_id = "camera_right";
+
+  bool allocated = false;
+
+  while (rclcpp::ok()) {    
     // Grab and convert both cameras in parallel using async
     auto t0 = std::chrono::steady_clock::now();
+    cv::Mat imageL, imageR;
     auto futureL = std::async(std::launch::async, [&]() {
       return cameraL.getImage(imageL);
     });
@@ -53,41 +66,51 @@ int main(int argc, char ** argv)
     int statusR = futureR.get();
 
     if (statusL != 0 || statusR != 0) {
-      continue;  // skip if either failed
+      continue;
     }
+
     auto t1 = std::chrono::steady_clock::now();
+
+    // Allocate ONCE
+    if (!allocated) {
+      msgL.width  = imageL.cols;
+      msgL.height = imageL.rows;
+      msgL.step   = imageL.cols * 3;
+
+      msgR.width  = imageR.cols;
+      msgR.height = imageR.rows;
+      msgR.step   = imageR.cols * 3;
+
+      msgL.data.resize(imageL.total() * imageL.elemSize());
+      msgR.data.resize(imageR.total() * imageR.elemSize());
+
+      allocated = true;
+    }
+
     auto stamp = node->now();
 
-    // Use cv_bridge
-    sensor_msgs::msg::Image::SharedPtr msgL;
-    sensor_msgs::msg::Image::SharedPtr msgR;
+    msgL.header.stamp = stamp;
+    msgR.header.stamp = stamp;
 
-    std::thread buildL([&]() {
-      auto cv_msg = cv_bridge::CvImage(
-        std_msgs::msg::Header(),
-        "bgr8",
-        imageL
+    // Parallel memcpy
+    auto copyL = std::async(std::launch::async, [&]() {
+      memcpy(
+        msgL.data.data(),
+        imageL.data,
+        imageL.total() * imageL.elemSize()
       );
-      cv_msg.header.stamp = stamp;
-      cv_msg.header.frame_id = "camera_left";
-
-      msgL = cv_msg.toImageMsg();
     });
 
-    std::thread buildR([&]() {
-      auto cv_msg = cv_bridge::CvImage(
-        std_msgs::msg::Header(),
-        "bgr8",
-        imageR
+    auto copyR = std::async(std::launch::async, [&]() {
+      memcpy(
+        msgR.data.data(),
+        imageR.data,
+        imageR.total() * imageR.elemSize()
       );
-      cv_msg.header.stamp = stamp;
-      cv_msg.header.frame_id = "camera_right";
-
-      msgR = cv_msg.toImageMsg();
     });
 
-    buildL.join();
-    buildR.join();
+    copyL.get();
+    copyR.get();
 
     pubL.publish(msgL);
     pubR.publish(msgR);
