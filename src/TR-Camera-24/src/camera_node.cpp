@@ -4,7 +4,6 @@
 #include "opencv2/imgcodecs.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "include/Camera.h"
-#include "std_msgs/msg/header.hpp"
 #include "sensor_msgs/msg/image.hpp"
 #include <thread>
 #include <future>
@@ -13,8 +12,7 @@
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::NodeOptions options;
-  rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("image_publisher", options);
+  auto node = rclcpp::Node::make_shared("image_publisher");
 
   // Declare parameters with defaults
   node->declare_parameter("exposure_time", 16000.0);
@@ -55,46 +53,60 @@ int main(int argc, char ** argv)
     int statusR = futureR.get();
 
     if (statusL != 0 || statusR != 0) {
-        continue;  // skip if either failed
+      continue;  // skip if either failed
     }
     auto t1 = std::chrono::steady_clock::now();
     auto stamp = node->now();
 
-    // Build both messages in parallel
-    auto msgL = std::make_unique<sensor_msgs::msg::Image>();
-    auto msgR = std::make_unique<sensor_msgs::msg::Image>();
+    // Use cv_bridge
+    sensor_msgs::msg::Image::SharedPtr msgL;
+    sensor_msgs::msg::Image::SharedPtr msgR;
 
     std::thread buildL([&]() {
-        msgL->header.stamp = stamp;
-        msgL->header.frame_id = "camera_left";
-        msgL->height = imageL.rows;
-        msgL->width = imageL.cols;
-        msgL->encoding = "bgr8";
-        msgL->is_bigendian = false;
-        msgL->step = imageL.cols * 3;
-        msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
+      auto cv_msg = cv_bridge::CvImage(
+        std_msgs::msg::Header(),
+        "bgr8",
+        imageL
+      );
+      cv_msg.header.stamp = stamp;
+      cv_msg.header.frame_id = "camera_left";
+
+      msgL = cv_msg.toImageMsg();
     });
 
     std::thread buildR([&]() {
-        msgR->header.stamp = stamp;
-        msgR->header.frame_id = "camera_right";
-        msgR->height = imageR.rows;
-        msgR->width = imageR.cols;
-        msgR->encoding = "bgr8";
-        msgR->is_bigendian = false;
-        msgR->step = imageR.cols * 3;
-        msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
+      auto cv_msg = cv_bridge::CvImage(
+        std_msgs::msg::Header(),
+        "bgr8",
+        imageR
+      );
+      cv_msg.header.stamp = stamp;
+      cv_msg.header.frame_id = "camera_right";
+
+      msgR = cv_msg.toImageMsg();
     });
 
     buildL.join();
     buildR.join();
 
-    pubL.publish(*msgL);
-    pubR.publish(*msgR);
+    pubL.publish(msgL);
+    pubR.publish(msgR);
+
     auto t2 = std::chrono::steady_clock::now();
 
-    printf("%ldms %ldms\n", (t1-t0).count(), (t2-t1).count());
+    auto capture_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+
+    auto publish_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+
+    RCLCPP_INFO(node->get_logger(),
+      "capture=%ld ms publish=%ld ms",
+      capture_ms,
+      publish_ms);
 
     rclcpp::spin_some(node);
   }
+  rclcpp::shutdown();
+  return 0;
 }
