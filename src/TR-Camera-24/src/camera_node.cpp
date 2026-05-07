@@ -123,10 +123,8 @@ int main(int argc, char ** argv)
     auto publish_ms =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 
-    RCLCPP_INFO(node->get_logger(),
-      "capture=%ld ms publish=%ld ms",
-      capture_ms,
-      publish_ms);
+    RCLCPP_INFO_THROTTLE(node->get_logger(), *node->get_clock(), 1000,
+    "capture=%ld ms publish=%ld ms", capture_ms, publish_ms);
 
     rclcpp::spin_some(node);
   }
