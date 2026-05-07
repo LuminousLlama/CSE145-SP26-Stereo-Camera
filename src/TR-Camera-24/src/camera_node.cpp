@@ -12,7 +12,11 @@
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  auto node = rclcpp::Node::make_shared("image_publisher");
+  
+  rclcpp::NodeOptions options;
+  options.use_intra_process_comms(true);
+
+  auto node = rclcpp::Node::make_shared("image_publisher", options);
 
   // Declare parameters with defaults
   node->declare_parameter("exposure_time", 16000.0);
@@ -37,20 +41,6 @@ int main(int argc, char ** argv)
   cameraL.init(exposure_time, trigger_mode);
   cameraR.init(exposure_time, trigger_mode);
   
-  sensor_msgs::msg::Image msgL;
-  sensor_msgs::msg::Image msgR;
-
-  msgL.encoding = "rgb8";
-  msgR.encoding = "rgb8";
-
-  msgL.is_bigendian = false;
-  msgR.is_bigendian = false;
-
-  msgL.header.frame_id = "camera_left";
-  msgR.header.frame_id = "camera_right";
-
-  bool allocated = false;
-
   while (rclcpp::ok()) {    
     // Grab and convert both cameras in parallel using async
     auto t0 = std::chrono::steady_clock::now();
@@ -61,41 +51,40 @@ int main(int argc, char ** argv)
     auto futureR = std::async(std::launch::async, [&]() {
       return cameraR.getImage(imageR);
     });
-
+    
     int statusL = futureL.get();
     int statusR = futureR.get();
-
+    
     if (statusL != 0 || statusR != 0) {
       continue;
     }
+    
+    auto t1 = std::chrono::steady_clock::now();    
+    auto msgL = std::make_unique<sensor_msgs::msg::Image>();
+    msgL->encoding = "rgb8";
+    msgL->header.frame_id = "camera_left";
+    msgL->width  = imageL.cols;
+    msgL->height = imageL.rows;
+    msgL->step   = imageL.cols * 3;
+    msgL->data.resize(imageL.total() * imageL.elemSize());
 
-    auto t1 = std::chrono::steady_clock::now();
-
-    // Allocate ONCE
-    if (!allocated) {
-      msgL.width  = imageL.cols;
-      msgL.height = imageL.rows;
-      msgL.step   = imageL.cols * 3;
-
-      msgR.width  = imageR.cols;
-      msgR.height = imageR.rows;
-      msgR.step   = imageR.cols * 3;
-
-      msgL.data.resize(imageL.total() * imageL.elemSize());
-      msgR.data.resize(imageR.total() * imageR.elemSize());
-
-      allocated = true;
-    }
+    auto msgR = std::make_unique<sensor_msgs::msg::Image>();
+    msgR->encoding = "rgb8";
+    msgR->header.frame_id = "camera_right";
+    msgR->width  = imageR.cols;
+    msgR->height = imageR.rows;
+    msgR->step   = imageR.cols * 3;
+    msgR->data.resize(imageR.total() * imageR.elemSize());
 
     auto stamp = node->now();
 
-    msgL.header.stamp = stamp;
-    msgR.header.stamp = stamp;
+    msgL->header.stamp = stamp;
+    msgR->header.stamp = stamp;
 
     // Parallel memcpy
     auto copyL = std::async(std::launch::async, [&]() {
       memcpy(
-        msgL.data.data(),
+        msgL->data.data(),
         imageL.data,
         imageL.total() * imageL.elemSize()
       );
@@ -103,7 +92,7 @@ int main(int argc, char ** argv)
 
     auto copyR = std::async(std::launch::async, [&]() {
       memcpy(
-        msgR.data.data(),
+        msgR->data.data(),
         imageR.data,
         imageR.total() * imageR.elemSize()
       );
@@ -112,8 +101,8 @@ int main(int argc, char ** argv)
     copyL.get();
     copyR.get();
 
-    pubL.publish(msgL);
-    pubR.publish(msgR);
+    pubL.publish(std::move(msgL));
+    pubR.publish(std::move(msgR));
 
     auto t2 = std::chrono::steady_clock::now();
 
