@@ -59,31 +59,28 @@ int main(int argc, char ** argv)
 
     auto stamp = node->now();
 
-    // Zero-copy publish for L
-    auto loanedL = pubL->borrow_loaned_message();
-    auto & msgL = loanedL.get();
-    msgL.header.stamp = stamp;
-    msgL.header.frame_id = "camera_left";
-    msgL.height = imageL.rows;
-    msgL.width = imageL.cols;
-    msgL.encoding = "bgr8";
-    msgL.is_bigendian = false;
-    msgL.step = imageL.cols * 3;
-    memcpy(msgL.data.data(), imageL.data, imageL.total() * imageL.elemSize());
-    pubL->publish(std::move(loanedL));
+    // Replace the loaned message blocks with this:
+    auto msgL = std::make_unique<sensor_msgs::msg::Image>();
+    msgL->header.stamp = stamp;
+    msgL->header.frame_id = "camera_left";
+    msgL->height = imageL.rows;
+    msgL->width = imageL.cols;
+    msgL->encoding = "bgr8";
+    msgL->is_bigendian = false;
+    msgL->step = imageL.cols * 3;
+    msgL->data.assign(imageL.data, imageL.data + imageL.total() * imageL.elemSize());
+    pubL->publish(std::move(msgL));
 
-    // Zero-copy publish for R
-    auto loanedR = pubR->borrow_loaned_message();
-    auto & msgR = loanedR.get();
-    msgR.header.stamp = stamp;
-    msgR.header.frame_id = "camera_right";
-    msgR.height = imageR.rows;
-    msgR.width = imageR.cols;
-    msgR.encoding = "bgr8";
-    msgR.is_bigendian = false;
-    msgR.step = imageR.cols * 3;
-    memcpy(msgR.data.data(), imageR.data, imageR.total() * imageR.elemSize());
-    pubR->publish(std::move(loanedR));
+    auto msgR = std::make_unique<sensor_msgs::msg::Image>();
+    msgR->header.stamp = stamp;
+    msgR->header.frame_id = "camera_right";
+    msgR->height = imageR.rows;
+    msgR->width = imageR.cols;
+    msgR->encoding = "bgr8";
+    msgR->is_bigendian = false;
+    msgR->step = imageR.cols * 3;
+    msgR->data.assign(imageR.data, imageR.data + imageR.total() * imageR.elemSize());
+    pubR->publish(std::move(msgR));
 
     rclcpp::spin_some(node);
   }
