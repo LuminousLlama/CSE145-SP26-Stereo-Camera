@@ -5,50 +5,6 @@ import cv2
 import unittest
 import random
 
-# import os
-# print(os.getcwd())
-
-#load a pair of images
-# img1 = cv2.imread('../images/left.png')
-# img2 = cv2.imread('../images/right.png')
-vflag = False
-
-# camera_matrix = np.array([[623.53830, 0.00000, 640.00000], 
-#                             [0.00000, 623.53830, 360.00000], 
-#                             [0.00000, 0.00000, 1.00000]])
-# cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000], 
-# 					 [0.00000,	-1.00000,	0.00000,	1.00000],
-# 					 [0.00000,	0.00000,	-1.00000,	-10.00000],
-# 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 1
-# cam2_ext = np.array([[0.99444, 0.00000, 0.10530, 0.55578], 
-# 					 [0.00000,	-1.00000,	0.00000,	1.00000], 
-# 					 [0.10530,	0.00000,	-0.99444,	-9.99706], 
-# 					 [0.00000,	0.00000,	0.00000,	1.00000]]) #extrinsic parameters, camera 2
-# dist_coeffs = None #distortion coefficients
-
-#ext1
-#1.00000	0.00000	0.00000	0.00000
-#0.00000	-1.00000	0.00000	1.00000
-#0.00000	0.00000	-1.00000	-10.00000
-#0.00000	0.00000	0.00000	1.00000
-
-#ext2
-# 0.99444	0.00000	0.10530	0.55578
-# 0.00000	-1.00000	0.00000	1.00000
-# 0.10530	0.00000	-0.99444	-9.99706
-# 0.00000	0.00000	0.00000	1.00000
-
-#K
-#623.53830	0.00000	640.00000	0.00000
-#0.00000	623.53830	360.00000	0.00000
-#0.00000	0.00000	1.00000	0.00000
-#0.00000	0.00000	0.00000	1.00000
-
-# cv2.imshow('My Image', img2)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-
 def extract_R_T(cam1_ext, cam2_ext):
 	#Return R, T from cam1 to cam2
 
@@ -138,27 +94,24 @@ def disparity_raw(img1_rect, img2_rect, numDisparities=16, blockSize=5, method=1
 	disparity = stereo.compute(g1, g2)
 	return disparity.astype('float32')/16.0
 
-def disparity_WLS(img1_rect, img2_rect, numDisparities=16, blockSize=5, wls_lambda=8000, wls_sigma=1.0, method=1):
+def disparity_WLS(img1_rect, img2_rect, numDisparities=16, blockSize=5, wls_lambda=8000, wls_sigma=1.0):
 	left = None
 
 	g1 = cv2.cvtColor(img1_rect, cv2.COLOR_BGR2GRAY)
 	g2 = cv2.cvtColor(img2_rect, cv2.COLOR_BGR2GRAY)
 
-	if method == 1:
-		left = cv2.StereoBM_create(numDisparities=numDisparities, blockSize=blockSize)
-	elif method == 2:
-		left = cv2.StereoSGBM_create(
-		minDisparity=0,
-		numDisparities=numDisparities,      
-		blockSize=5,              
-		P1=8 * 3 * 5**2,
-		P2=32 * 3 * 5**2,
-		disp12MaxDiff=1,
-		uniquenessRatio=10,
-		speckleWindowSize=100,
-		speckleRange=32,
-		mode=cv2.StereoSGBM_MODE_SGBM_3WAY
-	)
+	left = cv2.StereoSGBM_create(
+        minDisparity=0,
+        numDisparities=numDisparities,      
+        blockSize=5,              
+        P1=8 * 3 * 5**2,
+        P2=32 * 3 * 5**2,
+        disp12MaxDiff=1,
+        uniquenessRatio=10,
+        speckleWindowSize=100,
+        speckleRange=32,
+        mode=cv2.StereoSGBM_MODE_SGBM
+    )
 
 	right = cv2.ximgproc.createRightMatcher(left)
 
@@ -236,7 +189,7 @@ def initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2
 
 	return pointcloud
 
-def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.01):
+def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.05):
 	points_3d = cv2.reprojectImageTo3D(disparity, Q, handleMissingValues=True)
     
 	# Convert OpenCV (X right, Y down, Z forward) to ROS (X forward, Y left, Z up)
@@ -259,8 +212,7 @@ def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.0
 	pts_valid = pts[mask_flat]
 
 	colors = img1_rect.reshape(-1, 3)
-	colors_rgb = colors[:, ::-1]
-	colors_valid = colors_rgb[mask_flat]
+	colors_valid = colors[mask_flat]
 
 	#Nx6 array: x, y, z, r, g, b
 	pointcloud = np.hstack((pts_valid, colors_valid))
@@ -281,14 +233,8 @@ def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q)
 	img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
 
 	if img1_rect is not None and img2_rect is not None:
-		disparity = disparity_WLS(img1_rect, img2_rect, method=2, numDisparities=256)
+		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=256)
 		#print(f"Disparity range: min={disparity[disparity > 0].min():.2f}, max={disparity[disparity > 0].max():.2f}, std={disparity[disparity > 0].std():.2f}")
-
-		# Visualize
-		# if not vflag:
-		# 	vflag = True
-		# 	vis = cv2.normalize(disparity, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-		# 	cv2.imshow("Disparity", cv2.applyColorMap(vis, cv2.COLORMAP_JET))
 
 		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q)
 		return pointcloud

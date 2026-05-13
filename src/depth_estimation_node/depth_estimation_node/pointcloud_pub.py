@@ -106,12 +106,27 @@ class PointCloudPublisher(Node):
         msg.point_step = 16
         msg.row_step = msg.point_step * msg.width
 
-        data = []
-        for x, y, z, r, g, b in points:
-            rgb = struct.unpack('I', struct.pack('BBBB', int(b), int(g), int(r), 0))[0]
-            data.append(struct.pack('fffI', x, y, z, rgb))
+        pts = np.array(points, dtype=np.float32)  # Nx6
 
-        msg.data = b''.join(data)
+        xyz = pts[:, :3].astype(np.float32)
+        rgb_arr = pts[:, 3:6].astype(np.uint8)
+
+        # Pack RGB into uint32
+        rgb_packed = (rgb_arr[:, 2].astype(np.uint32) |          # B
+                    (rgb_arr[:, 1].astype(np.uint32) << 8)  |   # G
+                    (rgb_arr[:, 0].astype(np.uint32) << 16))     # R
+
+        # Build structured array in one shot
+        cloud = np.zeros(len(pts), dtype=[
+            ('x', np.float32), ('y', np.float32), ('z', np.float32),
+            ('rgb', np.uint32)
+        ])
+        cloud['x'] = xyz[:, 0]
+        cloud['y'] = xyz[:, 1]
+        cloud['z'] = xyz[:, 2]
+        cloud['rgb'] = rgb_packed
+
+        msg.data = cloud.tobytes()
         self.pub.publish(msg)
 
 def main():
