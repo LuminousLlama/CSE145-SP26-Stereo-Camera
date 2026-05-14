@@ -31,9 +31,9 @@ cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
                      [0.00000, 0.00000, 1.00000, 0.00000],
                      [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 1
 cam2_ext = np.array([
- [ 9.99738554e-01,  9.53599243e-03, -2.07819485e-02, -2.18013592e+02],
- [-9.35516443e-03,  9.99917683e-01,  8.78112561e-03, -1.14763914e+01],
- [ 2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -1.91280374e+01],
+ [ 9.99738554e-01,  9.53599243e-03, -2.07819485e-02, -2.18013592e-01],
+ [-9.35516443e-03,  9.99917683e-01,  8.78112561e-03, -1.14763914e-02],
+ [ 2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -1.91280374e-02],
  [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])  # extrinsic parameters, camera 2
 
 class PointCloudPublisher(Node):
@@ -79,6 +79,7 @@ class PointCloudPublisher(Node):
                 return
 
         if self.map1_x is None:
+            print("dah")
             return
 
         points = gen_pointcloud_from_disparity(
@@ -89,6 +90,7 @@ class PointCloudPublisher(Node):
         )
 
         if points is None or len(points) == 0:
+            print("sad")
             return
 
         msg = PointCloud2()
