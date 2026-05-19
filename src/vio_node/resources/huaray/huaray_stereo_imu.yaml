@@ -1,0 +1,64 @@
+%YAML:1.0
+
+#common parameters
+imu_topic: "/imu/data"
+image0_topic: "/camera/imageL"
+image1_topic: "/camera/imageR"
+output_path: "/tmp/vins_output/"
+
+model_type: PINHOLE
+camera_count: 2
+
+cam0_calib: "cam0_pinhole.yaml"
+image_width: 640
+image_height: 512
+
+cam1_calib: "cam1_pinhole.yaml"
+
+# Extrinsics between cam0 and cam1 (from your calibration, in meters)
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [1.0, 0.0, 0.0, 0.0,
+          0.0, 1.0, 0.0, 0.0,
+          0.0, 0.0, 1.0, 0.0,
+          0.0, 0.0, 0.0, 1.0]
+
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 9.99738554e-01,  9.53599243e-03, -2.07819485e-02, -0.21801359,
+          -9.35516443e-03,  9.99917683e-01,  8.78112561e-03, -0.01147639,
+           2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -0.01912804,
+           0.0,             0.0,             0.0,             1.0]
+
+#IMU parameters - BNO055
+acc_n: 0.1
+gyr_n: 0.01
+acc_w: 0.001
+gyr_w: 0.0001
+g_norm: 9.81
+
+#feature tracking
+max_cnt: 150
+min_dist: 30
+freq: 10
+F_threshold: 1.0
+show_track: 1
+flow_back: 1
+
+#optimization
+max_solver_time: 0.04
+max_num_iterations: 8
+keyframe_parallax: 10.0
+
+#loop closure
+loop_closure: 0
+load_previous_pose_graph: 0
+fast_relocalization: 0
+
+#unsynchronized sensors
+estimate_td: 1
+td: 0.0

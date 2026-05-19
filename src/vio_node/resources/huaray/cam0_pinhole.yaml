@@ -1,0 +1,14 @@
+model_type: PINHOLE
+camera_name: cam0
+image_width: 640
+image_height: 512
+projection_parameters:
+   fx: 2125.86235
+   fy: 2131.44724
+   cx: 608.822181
+   cy: 500.933963
+distortion_parameters:
+   k1: -0.07949666
+   k2:  0.29615714
+   p1: -0.0039992
+   p2: -0.00234051
