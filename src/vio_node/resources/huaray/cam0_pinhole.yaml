@@ -1,3 +1,5 @@
+%YAML:1.0
+
 model_type: PINHOLE
 camera_name: cam0
 image_width: 640

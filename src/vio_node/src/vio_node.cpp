@@ -40,9 +40,9 @@ public:
             });
 
         // Republish on topics VINS subscribes to
-        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/imu/data", 100);
-        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/camera/imageL", 10);
-        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/camera/imageR", 10);
+        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/vins/data", 100);
+        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageL", 10);
+        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageR", 10);
 
         RCLCPP_INFO(get_logger(), "VIO adapter started — converting to grayscale for VINS");
     }

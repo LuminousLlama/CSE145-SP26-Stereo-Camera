@@ -1,9 +1,9 @@
 %YAML:1.0
 
 #common parameters
-imu_topic: "/imu/data"
-image0_topic: "/camera/imageL"
-image1_topic: "/camera/imageR"
+imu_topic: "/vins/data"
+image0_topic: "/vins/imageL"
+image1_topic: "/vins/imageR"
 output_path: "/tmp/vins_output/"
 
 model_type: PINHOLE
