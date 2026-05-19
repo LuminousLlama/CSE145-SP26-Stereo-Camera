@@ -8,16 +8,15 @@ class VIOAdapter : public rclcpp::Node {
 public:
     VIOAdapter() : Node("vio_adapter") {
         // Subscribe to your existing topics
+        auto sensor_qos = rclcpp::SensorDataQoS();
         imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
-            "/imu/data", 100,
+            "/imu/data", sensor_qos,
             [this](sensor_msgs::msg::Imu::SharedPtr msg) {
-                // VINS needs raw accel (with gravity), not linear accel
-                // Make sure your IMU node publishes raw accel
                 imu_pub_->publish(*msg);
             });
 
         imgL_sub_ = create_subscription<sensor_msgs::msg::Image>(
-            "/camera/imageL", 10,
+            "/camera/imageL", sensor_qos,
             [this](sensor_msgs::msg::Image::SharedPtr msg) {
                 // Convert to grayscale — VINS works on grayscale
                 auto cv_img = cv_bridge::toCvShare(msg, "rgb8");
@@ -29,7 +28,7 @@ public:
             });
 
         imgR_sub_ = create_subscription<sensor_msgs::msg::Image>(
-            "/camera/imageR", 10,
+            "/camera/imageR", sensor_qos,
             [this](sensor_msgs::msg::Image::SharedPtr msg) {
                 auto cv_img = cv_bridge::toCvShare(msg, "rgb8");
                 cv::Mat gray;
@@ -40,9 +39,9 @@ public:
             });
 
         // Republish on topics VINS subscribes to
-        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/vins/data", 100);
-        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageL", 10);
-        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageR", 10);
+        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/vins/data", sensor_qos);
+        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageL", sensor_qos);
+        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageR", sensor_qos);
 
         RCLCPP_INFO(get_logger(), "VIO adapter started — converting to grayscale for VINS");
     }
