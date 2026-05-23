@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import unittest
 import random
+from ultralytics import YOLO
 
 def extract_R_T(cam1_ext, cam2_ext):
 	#Return R, T from cam1 to cam2
@@ -94,24 +95,22 @@ def disparity_raw(img1_rect, img2_rect, numDisparities=16, blockSize=5, method=1
 	disparity = stereo.compute(g1, g2)
 	return disparity.astype('float32')/16.0
 
-def disparity_WLS(img1_rect, img2_rect, numDisparities=16, blockSize=5, wls_lambda=8000, wls_sigma=1.0):
+def disparity_WLS(img1_rect, img2_rect, numDisparities=128, blockSize=9, wls_lambda=8000, wls_sigma=0.5):
 	left = None
 
 	g1 = cv2.cvtColor(img1_rect, cv2.COLOR_BGR2GRAY)
 	g2 = cv2.cvtColor(img2_rect, cv2.COLOR_BGR2GRAY)
 
 	left = cv2.StereoSGBM_create(
-        minDisparity=0,
-        numDisparities=numDisparities,      
-        blockSize=5,              
-        P1=8 * 3 * 5**2,
-        P2=32 * 3 * 5**2,
-        disp12MaxDiff=1,
-        uniquenessRatio=10,
-        speckleWindowSize=100,
-        speckleRange=32,
-        mode=cv2.StereoSGBM_MODE_SGBM
-    )
+			minDisparity=0,
+			numDisparities=numDisparities,
+			blockSize=blockSize,
+
+			disp12MaxDiff=1,
+			uniquenessRatio=8,
+
+			mode=cv2.StereoSGBM_MODE_SGBM_3WAY
+		)
 
 	right = cv2.ximgproc.createRightMatcher(left)
 
@@ -189,8 +188,52 @@ def initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2
 
 	return pointcloud
 
-def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.05):
-	points_3d = cv2.reprojectImageTo3D(disparity, Q, handleMissingValues=True)
+def yolo_segmentation(img1):
+
+	#make an np mask that is W x H of images
+	final_mask = np.zeros((img1.shape[0], img1.shape[1]), dtype=np.uint8)
+
+	#feed in left image, get back a stack of object masks
+	yolo_model = YOLO("yolo11n-seg.pt")
+	
+	results = yolo_model(img1)
+
+	print(results[0].masks.data.shape)
+	masks = results[0].masks.data
+
+	classes = results[0].boxes.cls
+
+	colormask = {0: (0, 0, 0), }
+
+	for i, m in enumerate(masks):
+		coco_class = int(classes[i])
+		mask = m.cpu().numpy()
+		mask = cv2.resize(
+			mask,
+			(img1.shape[1], img1.shape[0])
+		)
+
+		mask = (mask > 0.5).astype(np.uint8)
+
+		# get pixels inside mask
+		pixels = img1[mask == 1]
+
+		if len(pixels) > 0:
+			mean_color = pixels.mean(axis=0)
+			mean_color = mean_color[::-1]
+			mean_color = tuple(mean_color.astype(np.uint8))
+			colormask[coco_class] = mean_color
+		else:
+			colormask[coco_class] = (0, 0, 0)
+
+		mask = mask * coco_class
+		final_mask = np.maximum(final_mask, mask)
+
+
+	return final_mask, colormask
+
+def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.05, yolo=0):
+	points_3d = cv2.reprojectImageTo3D(disparity, Q, handleMissingValues=False)
     
 	# Convert OpenCV (X right, Y down, Z forward) to ROS (X forward, Y left, Z up)
 	points_3d_ros = np.zeros_like(points_3d)
@@ -204,18 +247,34 @@ def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.0
 	mask = (np.random.rand(n, m) < fraction).astype(np.uint8)
 
 	#valid disparity values are > 0 and finite
-	valid_mask = np.isfinite(disparity) & (disparity > 0) & (mask == 1)
+	valid_mask = np.isfinite(disparity) & (disparity > 5) & (mask == 1)
 
 	pts = points_3d.reshape(-1, 3)
 	mask_flat = valid_mask.reshape(-1)
 
 	pts_valid = pts[mask_flat]
 
-	colors = img1_rect.reshape(-1, 3)
-	colors_valid = colors[mask_flat]
+	yolo_mask, colormask = yolo_segmentation(img1_rect)
+	colors_valid = None
+
+	if(yolo == 0):
+		colors = img1_rect.reshape(-1, 3)
+		colors_rgb = colors[:, ::-1]
+		colors_valid = colors_rgb[mask_flat]
+	else:
+		yolo_flat = yolo_mask.reshape(-1)
+		yolo_valid = yolo_flat[mask_flat]
+		colors_valid = np.zeros((len(yolo_valid), 3), dtype=np.uint8)
+
+		for class_id, color in colormask.items():
+
+			colors_valid[yolo_valid == class_id] = color
+
+		colors_valid = colors_valid.astype(np.float32)
 
 	#Nx6 array: x, y, z, r, g, b
 	pointcloud = np.hstack((pts_valid, colors_valid))
+
 	return pointcloud
 
 def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P2):
@@ -228,7 +287,7 @@ def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P
 		pointcloud = initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2)
 		return pointcloud
 	
-def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q):
+def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q, yolo=0):
 	global vflag
 	img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
 
@@ -236,7 +295,7 @@ def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q)
 		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=256)
 		#print(f"Disparity range: min={disparity[disparity > 0].min():.2f}, max={disparity[disparity > 0].max():.2f}, std={disparity[disparity > 0].std():.2f}")
 
-		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q)
+		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, yolo=yolo)
 		return pointcloud
 
 class PointcloudTests(unittest.TestCase):

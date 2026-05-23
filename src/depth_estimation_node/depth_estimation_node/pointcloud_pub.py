@@ -86,7 +86,8 @@ class PointCloudPublisher(Node):
             imgL, imgR,
             self.map1_x, self.map1_y,
             self.map2_x, self.map2_y,
-            self.Q
+            self.Q,
+            1 #1 for yolo, 0 for standard pointcloud
         )
 
         if points is None or len(points) == 0:
