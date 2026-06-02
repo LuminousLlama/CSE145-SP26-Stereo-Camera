@@ -76,8 +76,8 @@ class PointCloudPublisher(Node):
         # Sized for ~10 s at 30 Hz VIO output
         self._pose_stamps: list[int]        = []
         self._pose_Ts:     list[np.ndarray] = []
-        self._BUFFER_SIZE = 300
-        self._MAX_AGE_MS  = 200  # reject lookup if nearest pose is older than this
+        self._BUFFER_SIZE = 30
+        self._MAX_AGE_MS  = 2000  # reject lookup if nearest pose is older than this
 
         # Subscribe to VINS odometry independently (not time-synced with images —
         # it arrives at its own rate and we do a manual timestamp lookup instead)
@@ -86,7 +86,7 @@ class PointCloudPublisher(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=50
         )
-        self.create_subscription(Odometry, '/vins_estimator/odometry',
+        self.create_subscription(Odometry, '/odometry',
                                  self._odom_cb, odom_qos)
 
         subL = Subscriber(self, Image, '/camera/imageL', qos_profile=qos)

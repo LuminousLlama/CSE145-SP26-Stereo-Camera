@@ -293,7 +293,7 @@ def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q,
 	img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
 
 	if img1_rect is not None and img2_rect is not None:
-		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=64)
+		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=256)
 
 		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, yolo=yolo)
 		return pointcloud
