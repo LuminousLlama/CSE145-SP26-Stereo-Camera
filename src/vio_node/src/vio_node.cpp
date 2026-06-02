@@ -39,9 +39,10 @@ public:
             });
 
         // Republish on topics VINS subscribes to
-        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/vins/data", sensor_qos);
-        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageL", sensor_qos);
-        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageR", sensor_qos);
+        auto pub_qos = rclcpp::QoS(10).reliable();
+        imu_pub_  = create_publisher<sensor_msgs::msg::Imu>("/vins/data", pub_qos);
+        imgL_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageL", pub_qos);
+        imgR_pub_ = create_publisher<sensor_msgs::msg::Image>("/vins/imageR", pub_qos);
 
         RCLCPP_INFO(get_logger(), "VIO adapter started — converting to grayscale for VINS");
     }

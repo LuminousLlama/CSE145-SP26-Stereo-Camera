@@ -2,6 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2, PointField, Image
+from nav_msgs.msg import Odometry
 from message_filters import ApproximateTimeSynchronizer, Subscriber
 import struct
 import numpy as np
@@ -36,6 +37,26 @@ cam2_ext = np.array([
  [ 2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -1.91280374e-02],
  [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])  # extrinsic parameters, camera 2
 
+
+def quat_to_rot(x, y, z, w) -> np.ndarray:
+    """Quaternion to 3x3 rotation matrix, pure numpy."""
+    return np.array([
+        [1 - 2*(y*y + z*z),     2*(x*y - z*w),     2*(x*z + y*w)],
+        [    2*(x*y + z*w), 1 - 2*(x*x + z*z),     2*(y*z - x*w)],
+        [    2*(x*z - y*w),     2*(y*z + x*w), 1 - 2*(x*x + y*y)],
+    ], dtype=np.float64)
+
+
+def odom_to_transform(msg: Odometry) -> np.ndarray:
+    """Convert nav_msgs/Odometry pose to a 4x4 world-from-camera transform."""
+    p = msg.pose.pose.position
+    q = msg.pose.pose.orientation
+    T = np.eye(4, dtype=np.float64)
+    T[:3, :3] = quat_to_rot(q.x, q.y, q.z, q.w)
+    T[:3,  3] = [p.x, p.y, p.z]
+    return T
+
+
 class PointCloudPublisher(Node):
     def __init__(self):
         super().__init__('pc_publisher')
@@ -51,6 +72,23 @@ class PointCloudPublisher(Node):
         self.Q = None
         self.rectflag = False
 
+        # Pose buffer: parallel lists kept sorted by timestamp (ns)
+        # Sized for ~10 s at 30 Hz VIO output
+        self._pose_stamps: list[int]        = []
+        self._pose_Ts:     list[np.ndarray] = []
+        self._BUFFER_SIZE = 300
+        self._MAX_AGE_MS  = 200  # reject lookup if nearest pose is older than this
+
+        # Subscribe to VINS odometry independently (not time-synced with images —
+        # it arrives at its own rate and we do a manual timestamp lookup instead)
+        odom_qos = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=50
+        )
+        self.create_subscription(Odometry, '/vins_estimator/odometry',
+                                 self._odom_cb, odom_qos)
+
         subL = Subscriber(self, Image, '/camera/imageL', qos_profile=qos)
         subR = Subscriber(self, Image, '/camera/imageR', qos_profile=qos)
 
@@ -61,6 +99,43 @@ class PointCloudPublisher(Node):
         )
         self.sync.registerCallback(self.synced_callback)
 
+    # Pose buffer
+    def _odom_cb(self, msg: Odometry):
+        t_ns = rclpy.time.Time.from_msg(msg.header.stamp).nanoseconds
+        T    = odom_to_transform(msg)
+
+        self._pose_stamps.append(t_ns)
+        self._pose_Ts.append(T)
+
+        if len(self._pose_stamps) > self._BUFFER_SIZE:
+            self._pose_stamps.pop(0)
+            self._pose_Ts.pop(0)
+
+    def _lookup_pose(self, stamp_ns: int) -> np.ndarray | None:
+        """Nearest-neighbour pose lookup. Returns 4x4 transform or None."""
+        if not self._pose_stamps:
+            return None
+
+        # scan from newest backwards — the match is almost always at the tail
+        best_idx = 0
+        best_dt  = abs(self._pose_stamps[0] - stamp_ns)
+        for i in range(len(self._pose_stamps) - 1, -1, -1):
+            dt = abs(self._pose_stamps[i] - stamp_ns)
+            if dt < best_dt:
+                best_dt  = dt
+                best_idx = i
+            if self._pose_stamps[i] < stamp_ns:
+                break  # gone past — earlier entries can only be worse
+
+        dt_ms = best_dt / 1e6
+        if dt_ms > self._MAX_AGE_MS:
+            self.get_logger().warn(
+                f'Pose lookup: nearest pose is {dt_ms:.1f} ms away — skipping world transform')
+            return None
+
+        return self._pose_Ts[best_idx]
+
+    # Stereo callback
     def synced_callback(self, msgL, msgR):
         imgL = self.bridge.imgmsg_to_cv2(msgL, desired_encoding='rgb8')
         imgR = self.bridge.imgmsg_to_cv2(msgR, desired_encoding='rgb8')
@@ -79,7 +154,6 @@ class PointCloudPublisher(Node):
                 return
 
         if self.map1_x is None:
-            print("dah")
             return
 
         points = gen_pointcloud_from_disparity(
@@ -87,39 +161,37 @@ class PointCloudPublisher(Node):
             self.map1_x, self.map1_y,
             self.map2_x, self.map2_y,
             self.Q,
-            1 #1 for yolo, 0 for standard pointcloud
+            0 #1 for yolo, 0 for standard pointcloud
         )
 
         if points is None or len(points) == 0:
-            print("sad")
             return
 
-        msg = PointCloud2()
-        msg.header.frame_id = "map"
-        msg.header.stamp = msgL.header.stamp
-        msg.height = 1
-        msg.width = len(points)
-        msg.fields = [
-            PointField(name='x', offset=0,  datatype=PointField.FLOAT32, count=1),
-            PointField(name='y', offset=4,  datatype=PointField.FLOAT32, count=1),
-            PointField(name='z', offset=8,  datatype=PointField.FLOAT32, count=1),
-            PointField(name='rgb', offset=12, datatype=PointField.UINT32, count=1),
-        ]
-        msg.is_bigendian = False
-        msg.point_step = 16
-        msg.row_step = msg.point_step * msg.width
-
-        pts = np.array(points, dtype=np.float32)  # Nx6
-
-        xyz = pts[:, :3].astype(np.float32)
+        pts     = np.array(points, dtype=np.float32)  # Nx6: x,y,z,r,g,b
+        xyz     = pts[:, :3].astype(np.float64)
         rgb_arr = pts[:, 3:6].astype(np.uint8)
 
-        # Pack RGB into uint32
-        rgb_packed = (rgb_arr[:, 2].astype(np.uint32) |          # B
-                    (rgb_arr[:, 1].astype(np.uint32) << 8)  |   # G
-                    (rgb_arr[:, 0].astype(np.uint32) << 16))     # R
+        # --- look up the world pose for this frame's timestamp and apply it ---
+        stamp_ns    = rclpy.time.Time.from_msg(msgL.header.stamp).nanoseconds
+        T_world_cam = self._lookup_pose(stamp_ns)
 
-        # Build structured array in one shot
+        if T_world_cam is not None:
+            # homogeneous transform: (4x4) @ (4xN) -> (3xN)
+            ones  = np.ones((len(xyz), 1), dtype=np.float64)
+            xyz_h = np.hstack([xyz, ones])               # Nx4
+            xyz   = (T_world_cam @ xyz_h.T).T[:, :3]    # Nx3
+            frame_id = 'world'
+        else:
+            self.get_logger().warn('No VIO pose available — publishing in camera frame')
+            frame_id = 'left_cam'
+
+        xyz = xyz.astype(np.float32)
+
+        # --- pack RGB ---
+        rgb_packed = (rgb_arr[:, 2].astype(np.uint32) |
+                     (rgb_arr[:, 1].astype(np.uint32) << 8)  |
+                     (rgb_arr[:, 0].astype(np.uint32) << 16))
+
         cloud = np.zeros(len(pts), dtype=[
             ('x', np.float32), ('y', np.float32), ('z', np.float32),
             ('rgb', np.uint32)
@@ -129,7 +201,21 @@ class PointCloudPublisher(Node):
         cloud['z'] = xyz[:, 2]
         cloud['rgb'] = rgb_packed
 
-        msg.data = cloud.tobytes()
+        msg = PointCloud2()
+        msg.header.stamp    = msgL.header.stamp   # preserve original camera timestamp
+        msg.header.frame_id = frame_id
+        msg.height     = 1
+        msg.width      = len(pts)
+        msg.fields     = [
+            PointField(name='x',   offset=0,  datatype=PointField.FLOAT32, count=1),
+            PointField(name='y',   offset=4,  datatype=PointField.FLOAT32, count=1),
+            PointField(name='z',   offset=8,  datatype=PointField.FLOAT32, count=1),
+            PointField(name='rgb', offset=12, datatype=PointField.UINT32,  count=1),
+        ]
+        msg.is_bigendian = False
+        msg.point_step   = 16
+        msg.row_step     = msg.point_step * msg.width
+        msg.data         = cloud.tobytes()
         self.pub.publish(msg)
 
 def main():

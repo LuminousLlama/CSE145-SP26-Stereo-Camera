@@ -4,7 +4,18 @@ import numpy as np
 import cv2
 import unittest
 import random
-from ultralytics import YOLO
+# from ultralytics import YOLO
+
+# Cache the YOLO model at module level so it is only loaded once,
+# not on every frame as in the original.
+_yolo_model = None
+
+def _get_yolo():
+    global _yolo_model
+    if _yolo_model is None:
+        _yolo_model = YOLO("yolo11n-seg.pt")
+    return _yolo_model
+
 
 def extract_R_T(cam1_ext, cam2_ext):
 	#Return R, T from cam1 to cam2
@@ -75,13 +86,6 @@ def rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y, out_prefix='image
 	rectified1 = cv2.remap(img1, map1_x, map1_y, interpolation=cv2.INTER_LINEAR)
 	rectified2 = cv2.remap(img2, map2_x, map2_y, interpolation=cv2.INTER_LINEAR)
 
-	#print(rectified1.shape, rectified2.shape)
-
-	#left_out = out_prefix + '_left.png'
-	#right_out = out_prefix + '_right.png'
-	#cv2.imwrite(left_out, rectified1)
-	#cv2.imwrite(right_out, rectified2)
-
 	return rectified1, rectified2
 
 def disparity_raw(img1_rect, img2_rect, numDisparities=16, blockSize=5, method=1):
@@ -149,7 +153,6 @@ def match_sparse(img1_rect, img2_rect, detector, max_matches=2000):
 	bf = cv2.BFMatcher(norm, crossCheck=True) #might want to try FLANN here
 
 	matches = bf.match(des1, des2)
-	#matches = sorted(matches, key=lambda x: x.distance)
 
 	return kp1, kp2, matches[:max_matches]
 
@@ -193,8 +196,7 @@ def yolo_segmentation(img1):
 	#make an np mask that is W x H of images
 	final_mask = np.zeros((img1.shape[0], img1.shape[1]), dtype=np.uint8)
 
-	#feed in left image, get back a stack of object masks
-	yolo_model = YOLO("yolo11n-seg.pt")
+	yolo_model = _get_yolo()  # use cached model instead of re-loading every frame
 	
 	results = yolo_model(img1)
 
@@ -254,7 +256,7 @@ def initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, fraction=0.0
 
 	pts_valid = pts[mask_flat]
 
-	yolo_mask, colormask = yolo_segmentation(img1_rect)
+	# yolo_mask, colormask = yolo_segmentation(img1_rect)
 	colors_valid = None
 
 	if(yolo == 0):
@@ -288,12 +290,10 @@ def gen_pointcloud_from_params(img1, img2, map1_x, map1_y, map2_x, map2_y, P1, P
 		return pointcloud
 	
 def gen_pointcloud_from_disparity(img1, img2, map1_x, map1_y, map2_x, map2_y, Q, yolo=0):
-	global vflag
 	img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
 
 	if img1_rect is not None and img2_rect is not None:
-		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=256)
-		#print(f"Disparity range: min={disparity[disparity > 0].min():.2f}, max={disparity[disparity > 0].max():.2f}, std={disparity[disparity > 0].std():.2f}")
+		disparity = disparity_WLS(img1_rect, img2_rect, numDisparities=64)
 
 		pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q, yolo=yolo)
 		return pointcloud
@@ -373,8 +373,6 @@ class PointcloudTests(unittest.TestCase):
 			self.assertTrue(multicolor)
 
 
-
-
 if __name__ == '__main__':
 	#unittest.main() #to run unit tests
 
@@ -383,7 +381,6 @@ if __name__ == '__main__':
 	frame_count = 0
 	map1_x, map1_y, map2_x, map2_y, P1, P2, Q = None, None, None, None, None, None, None
 
-	# only run automatic rectification when intrinsics/extrinsics are provided
 	try:
 		if camera_matrix is not None and cam1_ext is not None and cam2_ext is not None:
 			map1_x, map1_y, map2_x, map2_y, P1, P2, Q = rectification_map(img1, img2, camera_matrix, dist_coeffs, cam1_ext, cam2_ext)
@@ -396,19 +393,9 @@ if __name__ == '__main__':
 
 		img1_rect, img2_rect = rectify_images(img1, img2, map1_x, map1_y, map2_x, map2_y)
 
-		
 		if img1_rect is not None and img2_rect is not None:
-			#disparity = disparity_WLS(img1_rect, img2_rect, method=1)
-			# plt.imshow(disparity,'gray', vmin=0, vmax=disparity.max())
-			# plt.show()
 			kp1, kp2, matches = match_sparse(img1_rect, img2_rect, 3)
 			pointcloud = initialize_sparse_pointcloud(img1_rect, img2_rect, kp1, kp2, matches, P1, P2)
-			# pointcloud = initialize_dense_pointcloud(img1_rect, img2_rect, disparity, Q)
-			# for i in range(len(pointcloud)):
-			# 	print('Point %d: (%.2f, %.2f, %.2f) Color: (%d, %d, %d)' % (i, pointcloud[i][0], pointcloud[i][1], pointcloud[i][2], pointcloud[i][3], pointcloud[i][4], pointcloud[i][5]))
-			# img_matches = draw_matches(img1_rect, img2_rect, kp1, kp2, matches)
-			# plt.imshow(img_matches)
-			# plt.show()
 		
 		frame_count += 1
 
@@ -418,7 +405,3 @@ if __name__ == '__main__':
 			print(f"avg fps: {fps:.2f}")
 
 			start_time = time.time()
-
-    
-
-
