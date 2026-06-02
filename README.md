@@ -13,7 +13,6 @@ A real-time stereo vision pipeline running on a Rubik Pi (ARM64 SBC) that captur
 - [Abstract](#abstract)
 - [System Architecture](#system-architecture)
 - [Hardware](#hardware)
-- [Repository Organization](#repository-organization)
 - [Setup & Replication](#setup--replication)
 - [Running the System](#running-the-system)
 - [Results](#results)
