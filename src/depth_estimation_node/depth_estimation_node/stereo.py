@@ -192,42 +192,53 @@ def yolo_segmentation(img1):
 
 	#make an np mask that is W x H of images
 	final_mask = np.zeros((img1.shape[0], img1.shape[1]), dtype=np.uint8)
+	colormask = {0: (0, 0, 0), }
 
 	#feed in left image, get back a stack of object masks
 	yolo_model = YOLO("yolo11n-seg.pt")
 	
 	results = yolo_model(img1)
 
-	print(results[0].masks.data.shape)
-	masks = results[0].masks.data
+	#print(results[0].masks.data.shape)
+	masks = None
+	if(results[0].masks):
+		masks = results[0].masks.data
 
-	classes = results[0].boxes.cls
+		classes = results[0].boxes.cls
 
-	colormask = {0: (0, 0, 0), }
+		for i, m in enumerate(masks):
+			coco_class = int(classes[i])
+			mask = m.cpu().numpy()
+			mask = cv2.resize(
+				mask,
+				(img1.shape[1], img1.shape[0])
+			)
 
-	for i, m in enumerate(masks):
-		coco_class = int(classes[i])
-		mask = m.cpu().numpy()
-		mask = cv2.resize(
-			mask,
-			(img1.shape[1], img1.shape[0])
-		)
+			mask = (mask > 0.8).astype(np.uint8)
 
-		mask = (mask > 0.5).astype(np.uint8)
+			# get pixels inside mask
+			pixels = img1[mask == 1]
+			print(len(pixels))
 
-		# get pixels inside mask
-		pixels = img1[mask == 1]
+			if len(pixels) > 0:
+				#mean_color = (255, 255, 255)
+				mean_color = pixels.mean(axis=0)
+				mean_color = mean_color[::-1]
+				mean_color = tuple(mean_color.astype(np.uint8))
+				colormax = max(mean_color[0], mean_color[1], mean_color[2])
 
-		if len(pixels) > 0:
-			mean_color = pixels.mean(axis=0)
-			mean_color = mean_color[::-1]
-			mean_color = tuple(mean_color.astype(np.uint8))
-			colormask[coco_class] = mean_color
-		else:
-			colormask[coco_class] = (0, 0, 0)
+				if colormax > 1:
+					scalefactor = 255/colormax
+					mean_color = np.array(mean_color) * scalefactor
+				else:
+					mean_color = (random.range(0, 255), random.range(0, 255), random.range(0, 255))
 
-		mask = mask * coco_class
-		final_mask = np.maximum(final_mask, mask)
+				colormask[coco_class] = mean_color
+			else:
+				colormask[coco_class] = (0, 0, 0)
+
+			mask = mask * coco_class
+			final_mask = np.maximum(final_mask, mask)
 
 
 	return final_mask, colormask
