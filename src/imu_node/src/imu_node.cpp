@@ -139,7 +139,7 @@ public:
         data.pitch = read_int16(buf, 4) / 16.0;
 
         // Linear acceleration
-        read_bytes(REG_ACC_DATA_X_LSB, buf, 6);
+        read_bytes(REG_LIA_DATA_X_LSB, buf, 6);
         data.ax = read_int16(buf, 0) / 100.0;
         data.ay = read_int16(buf, 2) / 100.0;
         data.az = read_int16(buf, 4) / 100.0;
