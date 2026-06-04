@@ -216,7 +216,7 @@ def yolo_segmentation(img1):
 				(img1.shape[1], img1.shape[0])
 			)
 
-			mask = (mask > 0.8).astype(np.uint8)
+			mask = (mask > 0.5).astype(np.uint8)
 
 			# get pixels inside mask
 			pixels = img1[mask == 1]

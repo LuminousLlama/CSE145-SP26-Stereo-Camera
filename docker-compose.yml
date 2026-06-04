@@ -6,6 +6,9 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - LIBGL_ALWAYS_SOFTWARE=1
+      - ROS_DOMAIN_ID=42
+      - ROS_LOCALHOST_ONLY=0
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/root/fastdds_eth.xml
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /run/user/1001:/run/user/1001
@@ -14,5 +17,6 @@ services:
       - ./src/depth_estimation_node:/ros2_ws/src/depth_estimation_node
       - ./images:/ros2_ws/src/images
       - ./bags:/ros2_ws/bags
+      - ~/fastdds_eth.xml:/root/fastdds_eth.xml
     ipc: host
     network_mode: host

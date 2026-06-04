@@ -17,14 +17,14 @@ qos = QoSProfile(
     depth=10
 )
 
-camera_matrix_L = np.array([[2.12586235e+03, 0.00000000e+00, 6.08822181e+02],
-                             [0.00000000e+00, 2.13144724e+03, 5.00933963e+02],
-                             [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+camera_matrix_L = np.array([[1062.931175, 0.0,         304.411091],
+                             [0.0,         1065.723620, 250.466982],
+                             [0.0,         0.0,         1.0       ]])
 dist_coeffs_L = np.array([-0.07949666, 0.29615714, -0.0039992, -0.00234051, -0.83580527])
 
-camera_matrix_R = np.array([[2.07018872e+03, 0.00000000e+00, 6.34785055e+02],
-                             [0.00000000e+00, 2.06888960e+03, 4.74850490e+02],
-                             [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+camera_matrix_R = np.array([[1035.094360, 0.0,         317.392528],
+                             [0.0,         1034.444800, 237.425245],
+                             [0.0,         0.0,         1.0       ]])
 dist_coeffs_R = np.array([-0.09998571, 0.57469675, -0.00285518, -0.00264086, -1.54810632])
 
 cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
@@ -46,6 +46,14 @@ def quat_to_rot(x, y, z, w) -> np.ndarray:
         [    2*(x*z - y*w),     2*(y*z + x*w), 1 - 2*(x*x + y*y)],
     ], dtype=np.float64)
 
+# T_ros_vins = np.array([
+#     [ 0,  1,  0,  0],
+#     [ 1,  0,  0,  0],
+#     [ 0,  0,  1,  0],
+#     [ 0,  0,  0,  1]
+# ], dtype=np.float64)
+
+T_ros_vins = np.eye(4)
 
 def odom_to_transform(msg: Odometry) -> np.ndarray:
     """Convert nav_msgs/Odometry pose to a 4x4 world-from-camera transform."""
@@ -54,7 +62,7 @@ def odom_to_transform(msg: Odometry) -> np.ndarray:
     T = np.eye(4, dtype=np.float64)
     T[:3, :3] = quat_to_rot(q.x, q.y, q.z, q.w)
     T[:3,  3] = [p.x, p.y, p.z]
-    return T
+    return T_ros_vins @ T
 
 
 class PointCloudPublisher(Node):
@@ -183,7 +191,7 @@ class PointCloudPublisher(Node):
             frame_id = 'world'
         else:
             self.get_logger().warn('No VIO pose available — publishing in camera frame')
-            frame_id = 'left_cam'
+            frame_id = 'world'
 
         xyz = xyz.astype(np.float32)
 
