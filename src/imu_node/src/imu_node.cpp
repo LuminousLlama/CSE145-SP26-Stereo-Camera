@@ -32,6 +32,7 @@
 
 #define MODE_CONFIG     0x00
 #define MODE_NDOF       0x0C
+#define MODE_IMU        0x08
 
 class BNO055 {
 public:
@@ -49,7 +50,7 @@ public:
             throw std::runtime_error("BNO055 not found, chip ID: " + std::to_string(chip_id));
 
         reset();
-        set_mode(MODE_NDOF);
+        set_mode(MODE_IMU);
     }
 
     ~BNO055() { close(fd); }
@@ -139,7 +140,7 @@ public:
         data.pitch = read_int16(buf, 4) / 16.0;
 
         // Linear acceleration
-        read_bytes(REG_LIA_DATA_X_LSB, buf, 6);
+        read_bytes(REG_ACC_DATA_X_LSB, buf, 6);
         data.ax = read_int16(buf, 0) / 100.0;
         data.ay = read_int16(buf, 2) / 100.0;
         data.az = read_int16(buf, 4) / 100.0;

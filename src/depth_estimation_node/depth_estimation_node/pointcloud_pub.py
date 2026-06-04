@@ -27,15 +27,15 @@ camera_matrix_R = np.array([[2.07018872e+03, 0.00000000e+00, 6.34785055e+02],
                              [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 dist_coeffs_R = np.array([-0.09998571, 0.57469675, -0.00285518, -0.00264086, -1.54810632])
 
-cam1_ext = np.array([[0.0, 0.0, 1.0, 0.0],
-                     [-1.0, 0.0, 0.0, -0.114],
-                     [0.0, -1.0, 0.0, 0.0],
-                     [0.0, 0.0, 0.0, 1.0]])  # extrinsic parameters, camera 1
+cam1_ext = np.array([[1.00000, 0.00000, 0.00000, 0.00000],
+                     [0.00000, 1.00000, 0.00000, 0.00000],
+                     [0.00000, 0.00000, 1.00000, 0.00000],
+                     [0.00000, 0.00000, 0.00000, 1.00000]])  # extrinsic parameters, camera 1
 cam2_ext = np.array([
- [9.99738554e-01,  9.53599243e-03, -2.07819485e-02,  0.10401359],
- [-9.35516443e-03,  9.99917683e-01,  8.78112561e-03, -0.01147639],
- [2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -0.01912804],
- [0.0,             0.0,             0.0,             1.0]])  # extrinsic parameters, camera 2
+ [ 9.99738554e-01,  9.53599243e-03, -2.07819485e-02, -2.18013592e-01],
+ [-9.35516443e-03,  9.99917683e-01,  8.78112561e-03, -1.14763914e-02],
+ [ 2.08639746e-02, -8.58441127e-03,  9.99745469e-01, -1.91280374e-02],
+ [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])  # extrinsic parameters, camera 2
 
 
 def quat_to_rot(x, y, z, w) -> np.ndarray:
@@ -131,9 +131,9 @@ class PointCloudPublisher(Node):
         if dt_ms > self._MAX_AGE_MS:
             self.get_logger().warn(
                 f'Pose lookup: nearest pose is {dt_ms:.1f} ms away — skipping world transform')
-            return None
+            # return None
 
-        return self._pose_Ts[best_idx]
+        return self._pose_Ts[-1]
 
     # Stereo callback
     def synced_callback(self, msgL, msgR):
